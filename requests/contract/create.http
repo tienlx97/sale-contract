@@ -6,10 +6,19 @@ Content-Type: application/json
   "signDate":{
     "text1": "18th September 2025"
   },
-  "contract": {
-    "no": "25KCT23",
-    "project": "Q-2025-059 Comstock Pond Cover",
-    "item": "STEEL STRUCTURE",
-    "country": "CANADA"
-  }
+  "contractNo":"25KCT23",
+  "contractDetails": [
+    {
+       "key":"Project",
+       "value":"Q-2025-059 Comstock Pond Cover"
+    },
+    {
+       "key":"Item",
+       "value":"STEEL STRUCTURE"
+    },
+    {
+       "key":"Location",
+       "value":"CANADA"
+    }
+  ]
 }
