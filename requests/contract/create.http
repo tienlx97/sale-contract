@@ -4,7 +4,8 @@ Content-Type: application/json
 {
   "incoterm": "exw",
   "signDate":{
-    "text1": "18th September 2025"
+    "text1": "18th September 2025",
+    "text2": "18th day of September 2025"
   },
   "contractNo":"25KCT23",
   "contractDetails": [
@@ -20,5 +21,63 @@ Content-Type: application/json
        "key":"Location",
        "value":"CANADA"
     }
-  ]
+  ],
+  "partyA":{
+    "key": "PARTY A (BUYER)",
+    "value": "ER STEEL INC.",
+    "markup":{
+      "bold": true
+    }
+  },
+  "partyADetail": [
+    {
+      "key":"Represented by",
+      "value":"Mr. Lloyd Kamlade",
+      "markup":{
+        "bold": true
+      }
+    },
+    {
+      "key":"Position",
+      "value":"Chief Operating Officer"
+    },
+    {
+      "key":"Address",
+      "value":"206-1511 Derwent Way, Delta, BC, Canada V3M 6N4"
+    }
+  ],
+  "partyB":{
+    "key": "PARTY B (CONTRACTOR)",
+    "value": "DAI NGHIA INDUSTRIAL MECHANICS CO., LTD",
+    "markup":{
+      "bold": true
+    }
+  },
+  "partyBDetail": [
+    {
+      "key":"Represented by",
+      "value":"MR. LE XUAN NGHIA",
+      "markup":{
+        "bold": true
+      }
+    },
+    {
+      "key":"Position",
+      "value":"General Director"
+    },
+    {
+      "key":"Address",
+      "value":"No 5 Vsip II-A, Street 32, Viet Nam – Singapore II-A IZ, Vinh Tan Ward, Ho Chi Minh City Viet Nam"
+    },
+    {
+      "key":"Tax Code",
+      "value":"3702682454"
+    }
+  ],
+  "projectWorkDetails": {
+    "projectName": "Q-2025-059 Comstock Pond Cover",
+    "item": "STEEL STRUCTURE",
+    "location": "CANADA",
+    "quotationDate": "18th September 2025"
+  }
 }

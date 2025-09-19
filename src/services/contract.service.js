@@ -1,21 +1,23 @@
-/* eslint-disable no-unused-vars */
-const path = require('path');
 const {
   Document,
   Packer,
   Paragraph,
-  ImageRun,
-  AlignmentType,
   TextRun,
-  Table,
-  WidthType,
+  AlignmentType,
+  Footer,
   BorderStyle,
-  TableLayoutType,
-  LineRuleType,
+  Table,
+  TableRow,
+  TableCell,
+  PageNumber,
+  WidthType,
 } = require('docx');
 const fs = require('fs');
-const { imageSize } = require('image-size');
-const { createProjectDetailRow, COLUMN_WIDTHS } = require('./contract/create');
+const { FONT, PARAGRAPH_SPACING, PAGE, INDENT, BORDER_NONE } = require('./contract/docx-config');
+const { numberingConfig } = require('./contract/numbering');
+const { createHeaderImageParagraph } = require('./contract/header');
+const { projectWorkDetailTable, projectDetailTable } = require('./contract/tables');
+const { createFooter } = require('./contract/footer');
 
 /**
  * Create a contract
@@ -23,134 +25,109 @@ const { createProjectDetailRow, COLUMN_WIDTHS } = require('./contract/create');
  */
 const createContract = async (contractBody) => {
   // eslint-disable-next-line no-unused-vars
-  const { incoterm, signDate, contractDetails, contractNo } = contractBody;
-
-  // const headerPath = path.resolve('assets/header/1.png');
-
-  // // Read image as Buffer
-  // const dncHeader = fs.readFileSync(headerPath);
-
-  // // image-size@2.x => pass Buffer (or ArrayBuffer), not a path string
-  // const dimensions = imageSize(dncHeader); // { width, height, type }
-  // if (!dimensions || !dimensions.width || !dimensions.height) {
-  //   throw new Error('Cannot read image dimensions');
-  // }
-
-  // // Page/margins in twips (A4 width ≈ 11907 twips; 1 cm ≈ 567 twips)
-  // const pageWidthTwips = 11907;
-  // const marginLeft = 567; // 1 cm
-  // const marginRight = 567; // 1 cm
-  // const usableWidthTwips = pageWidthTwips - marginLeft - marginRight;
-
-  // // Convert twips→px (approx): 1 px ≈ 15 twips (96 DPI)
-  // const usableWidthPx = Math.floor(usableWidthTwips / 15);
-
-  // // Keep aspect ratio; avoid upscaling past natural width
-  // const naturalW = dimensions.width;
-  // const naturalH = dimensions.height;
-  // const targetW = Math.min(usableWidthPx, naturalW);
-  // const targetH = Math.round((naturalH / naturalW) * targetW);
+  const { incoterm, signDate, contractDetails, contractNo, partyA, partyADetail, partyB, partyBDetail, projectWorkDetails } =
+    contractBody;
 
   const doc = new Document({
     styles: {
       default: {
         document: {
           run: {
-            font: 'Times New Roman',
-            size: 24, // 12pt
+            font: FONT.FAMILY,
+            size: FONT.SIZE_12,
           },
           paragraph: {
-            spacing: {
-              line: 240, // single
-              lineRule: LineRuleType.AUTO, // important on some Word versions
-              after: 120, // remove extra space after
-              before: 120, // remove extra space before
-            },
+            spacing: PARAGRAPH_SPACING,
           },
         },
       },
     },
+
+    numbering: numberingConfig,
+
     sections: [
       {
         properties: {
           page: {
-            margin: { top: 708, right: 567, bottom: 708, left: 567 }, // 1.25/1/1.25/1 cm
+            margin: {
+              top: PAGE.MARGIN.TOP,
+              right: PAGE.MARGIN.RIGHT,
+              bottom: PAGE.MARGIN.BOTTOM,
+              left: PAGE.MARGIN.LEFT,
+            },
           },
         },
+        footers: {
+          default: createFooter(),
+        },
         children: [
-          // 1. Header
+          createHeaderImageParagraph('assets/header/1.png'),
+          new Paragraph({
+            alignment: AlignmentType.RIGHT,
+            children: [new TextRun({ text: `Ho Chi Minh, ${String(signDate?.text1 ?? '')}`, size: FONT.SIZE_12 })],
+          }),
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: 'SALES CONTRACT', bold: true, size: FONT.SIZE_14 })],
+          }),
+
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({ text: `No: ${String(contractNo ?? '')}`, bold: true, size: FONT.SIZE_14, color: 'FF0000' }),
+            ],
+          }),
+
+          // Project detail table (center)
+          projectDetailTable(contractDetails),
+
+          // Intro text
+          new Paragraph({
+            children: [
+              new TextRun(
+                `This Contract is entered into on ${String(
+                  signDate?.text2 ?? ''
+                )} at the office of DAI NGHIA INDUSTRIAL MECHANICS CO., LTD between the two parties:`
+              ),
+            ],
+          }),
+
+          // // ARTICLE 1
           // new Paragraph({
+          //   numbering: { reference: 'article-numbering', level: 0 },
           //   children: [
-          //     new ImageRun({
-          //       data: dncHeader,
-          //       transformation: {
-          //         width: targetW, // fill usable page width (minus margins)
-          //         height: targetH, // proportional
-          //       },
+          //     new TextRun({ text: 'THE OBJECT OF THE CONTRACT', bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_14 }),
+          //   ],
+          // }),
+
+          // // 1.1 line (bold)
+          // new Paragraph({
+          //   numbering: { reference: 'article-numbering', level: 1 },
+          //   children: [
+          //     new TextRun({
+          //       text: 'Party A agrees to engage Party B for the supply and execution of steel structure works as described below:',
+          //       bold: true,
           //     }),
           //   ],
           // }),
-          // 2.
-          new Paragraph({
-            alignment: AlignmentType.RIGHT,
-            children: [
-              new TextRun({
-                text: `Ho Chi Minh, ${signDate.text1}`,
-                size: 24,
-              }),
-            ],
-          }),
 
-          // 3. Title
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [
-              new TextRun({
-                text: 'CONTRACT FOR SUPPLY OF STEEL STRUCTURE',
-                bold: true,
-                size: 28,
-              }),
-            ],
-          }),
-          // 4. Contract n.o
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [
-              new TextRun({
-                text: `No: ${contractNo}`,
-                bold: true,
-                size: 28,
-                color: '#FF0000',
-              }),
-            ],
-          }),
-
-          // 5. Table:
-          // Project: {project_name}
-          // Item: {item}
-          // Location: {contract_country}
-          new Table({
-            width: { size: 70, type: WidthType.PERCENTAGE }, // table stretches to page width
-            layout: TableLayoutType.FIXED, // respect columnWidths
-            columnWidths: COLUMN_WIDTHS, // applies to ALL rows
-            alignment: AlignmentType.CENTER,
-            borders: {
-              top: { style: BorderStyle.NONE },
-              bottom: { style: BorderStyle.NONE },
-              left: { style: BorderStyle.NONE },
-              right: { style: BorderStyle.NONE },
-              insideHorizontal: { style: BorderStyle.NONE },
-              insideVertical: { style: BorderStyle.NONE },
-            },
-            rows: [...contractDetails.map((cd) => createProjectDetailRow(cd.key, cd.value))],
-          }),
+          // // 1.1 continuation as a table aligned under L1 text
+          // projectWorkDetailTable(
+          //   {
+          //     projectName: projectWorkDetails.projectName,
+          //     item: projectWorkDetails.item,
+          //     location: projectWorkDetails.location,
+          //     quotationDate: projectWorkDetails.quotationDate,
+          //   },
+          //   INDENT.L1_LEFT
+          // ),
         ],
       },
     ],
   });
 
-  const buffer = await Packer.toBuffer(doc);
-  fs.writeFileSync(path.resolve('example.docx'), buffer);
+  const buf = await Packer.toBuffer(doc);
+  fs.writeFileSync('file.docx', buf);
   // eslint-disable-next-line no-console
   console.log('Document created successfully!');
 };
