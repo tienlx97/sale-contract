@@ -16,7 +16,7 @@ const fs = require('fs');
 const { FONT, PARAGRAPH_SPACING, PAGE, INDENT, BORDER_NONE } = require('./contract/docx-config');
 const { numberingConfig } = require('./contract/numbering');
 const { createHeaderImageParagraph } = require('./contract/header');
-const { projectWorkDetailTable, projectDetailTable } = require('./contract/tables');
+const { projectWorkDetailTable, projectDetailTable, createPartyTable } = require('./contract/tables');
 const { createFooter } = require('./contract/footer');
 
 /**
@@ -61,7 +61,7 @@ const createContract = async (contractBody) => {
           default: createFooter(),
         },
         children: [
-          createHeaderImageParagraph('assets/header/1.png'),
+          // createHeaderImageParagraph('assets/header/1.png'),
           new Paragraph({
             alignment: AlignmentType.RIGHT,
             children: [new TextRun({ text: `Ho Chi Minh, ${String(signDate?.text1 ?? '')}`, size: FONT.SIZE_12 })],
@@ -92,13 +92,33 @@ const createContract = async (contractBody) => {
             ],
           }),
 
-          // // ARTICLE 1
-          // new Paragraph({
-          //   numbering: { reference: 'article-numbering', level: 0 },
-          //   children: [
-          //     new TextRun({ text: 'THE OBJECT OF THE CONTRACT', bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_14 }),
-          //   ],
-          // }),
+          ...createPartyTable(partyA, partyADetail, 'A'),
+          new Paragraph({
+            children: [new TextRun('___')],
+          }),
+          ...createPartyTable(partyB, partyBDetail, 'B'),
+          new Paragraph({
+            children: [new TextRun('___')],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun('After negotiation, both parties have mutually agreed to sign this contract (“'),
+              new TextRun({
+                text: 'Contract',
+                bold: true,
+              }),
+              new TextRun('”) with the following terms and conditions:'),
+              new TextRun({ break: 1 }),
+            ],
+          }),
+
+          // ARTICLE 1
+          new Paragraph({
+            numbering: { reference: 'article-numbering', level: 0 },
+            children: [
+              new TextRun({ text: 'THE OBJECT OF THE CONTRACT', bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_14 }),
+            ],
+          }),
 
           // // 1.1 line (bold)
           // new Paragraph({

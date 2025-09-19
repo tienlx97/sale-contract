@@ -33,8 +33,8 @@ const projectDetailTable = (pairs /* [{key,value}] */) =>
   new Table({
     ...TABLE_DEFAULTS,
     layout: TableLayoutType.FIXED,
-    width: { size: 70, type: WidthType.PERCENTAGE },
-    columnWidths: COLS.LABEL_SEP_VALUE,
+    width: { size: 60, type: WidthType.PERCENTAGE },
+    columnWidths: COLS.LABEL_SEP_VALUE_2,
     alignment: AlignmentType.CENTER,
     rows: pairs.map(({ key, value }) => rowLabelSepValue(key, value, { boldLabel: true, boldValue: true })),
   });
@@ -80,4 +80,32 @@ const projectWorkDetailTable = ({ projectName, item, location, quotationDate }, 
   });
 };
 
-module.exports = { rowLabelSepValue, tableLabelSepValue, projectDetailTable, projectWorkDetailTable };
+// === Party table (Party A / Party B details) ===
+const createPartyTable = (partyName, partyDetails, partyChar) => [
+  new Table({
+    ...TABLE_DEFAULTS,
+    layout: TableLayoutType.FIXED,
+    columnWidths: COLS.LABEL_SEP_VALUE,
+    rows: [
+      rowLabelSepValue(partyName.key, partyName.value, {
+        boldLabel: partyName.markup?.bold,
+        boldValue: partyName.markup?.bold,
+      }),
+      ...partyDetails.map((cd) =>
+        rowLabelSepValue(cd.key, cd.value, { boldLabel: cd.markup?.bold, boldValue: cd.markup?.bold })
+      ),
+    ],
+  }),
+  new Paragraph({
+    children: [
+      new TextRun('(Hereinafter referred to as '),
+      new TextRun({
+        text: `Party ${partyChar}`,
+        bold: true,
+      }),
+      new TextRun(')'),
+    ],
+  }),
+];
+
+module.exports = { rowLabelSepValue, tableLabelSepValue, projectDetailTable, projectWorkDetailTable, createPartyTable };

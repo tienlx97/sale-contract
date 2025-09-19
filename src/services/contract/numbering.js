@@ -2,6 +2,9 @@
 const { AlignmentType, LevelFormat, LevelSuffix } = require('docx');
 const { INDENT, FONT } = require('./docx-config');
 
+/**
+ * @type {import("docx").INumberingOptions}
+ */
 const numberingConfig = {
   config: [
     {
@@ -11,11 +14,16 @@ const numberingConfig = {
         {
           level: 0,
           format: LevelFormat.DECIMAL,
-          text: 'ARTICLE %1:',
+          text: 'ARTICLE %1',
           suffix: LevelSuffix.TAB,
           alignment: AlignmentType.LEFT,
-          indent: { left: 0, hanging: INDENT.L1_GAP },
-          style: { run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_14 } },
+
+          style: {
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_14 },
+            paragraph: {
+              indent: { hanging: INDENT.L1_GAP },
+            },
+          },
         },
         // Level 1: %1.%2
         {

@@ -52,6 +52,7 @@ const TABLE_DEFAULTS = {
 // === Column presets (base; scale when needed) ===
 const COLS = {
   LABEL_SEP_VALUE: [3500, 400, 7500],
+  LABEL_SEP_VALUE_2: [2000, 400, 7500],
 };
 
 // === Helpers ===
