@@ -14,15 +14,12 @@ const numberingConfig = {
         {
           level: 0,
           format: LevelFormat.DECIMAL,
-          text: 'ARTICLE %1',
+          text: 'ARTICLE %1:',
           suffix: LevelSuffix.TAB,
           alignment: AlignmentType.LEFT,
 
           style: {
-            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_14 },
-            paragraph: {
-              indent: { hanging: INDENT.L1_GAP },
-            },
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_14, underline: true },
           },
         },
         // Level 1: %1.%2
@@ -32,8 +29,13 @@ const numberingConfig = {
           text: '%1.%2',
           suffix: LevelSuffix.TAB,
           alignment: AlignmentType.LEFT,
-          indent: { left: INDENT.L1_LEFT, hanging: INDENT.L1_GAP },
-          style: { run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_12 } },
+
+          style: {
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_12 },
+            paragraph: {
+              indent: { left: INDENT.L1_LEFT, hanging: INDENT.L1_GAP },
+            },
+          },
         },
         // Level 2: (i)
         {
@@ -42,8 +44,13 @@ const numberingConfig = {
           text: '(%3)',
           suffix: LevelSuffix.TAB,
           alignment: AlignmentType.LEFT,
-          indent: { left: INDENT.L2_LEFT_FROM_L1_TEXT, hanging: INDENT.L2_GAP },
-          style: { run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_12 } },
+
+          style: {
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_12 },
+            paragraph: {
+              indent: { left: INDENT.L2_LEFT_FROM_L1_TEXT, hanging: INDENT.L2_GAP },
+            },
+          },
         },
         // Level 3: bullet
         {
@@ -52,8 +59,12 @@ const numberingConfig = {
           text: '•',
           suffix: LevelSuffix.SPACE,
           alignment: AlignmentType.LEFT,
-          indent: { left: INDENT.BULLET_LEFT, hanging: INDENT.BULLET_GAP },
-          style: { run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_12 } },
+          style: {
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_12 },
+            paragraph: {
+              indent: { left: INDENT.BULLET_LEFT, hanging: INDENT.BULLET_GAP },
+            },
+          },
         },
       ],
     },

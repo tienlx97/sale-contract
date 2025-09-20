@@ -53,6 +53,7 @@ const TABLE_DEFAULTS = {
 const COLS = {
   LABEL_SEP_VALUE: [3500, 400, 7500],
   LABEL_SEP_VALUE_2: [2000, 400, 7500],
+  LABEL_SEP_VALUE_3: [5000, 400, 7500],
 };
 
 // === Helpers ===

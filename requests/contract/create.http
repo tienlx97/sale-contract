@@ -2,7 +2,6 @@ POST http://localhost:3000/v1/contract
 Content-Type: application/json
 
 {
-  "incoterm": "exw",
   "signDate":{
     "text1": "18th September 2025",
     "text2": "18th day of September 2025"
@@ -79,5 +78,73 @@ Content-Type: application/json
     "item": "STEEL STRUCTURE",
     "location": "CANADA",
     "quotationDate": "18th September 2025"
+  },
+  "quotationDate":{
+    "text1": "17/09/2025"
+  },
+  "contractPeriodPhrase":{
+    "preparation": {
+      "num": "1",
+      "type": "week"
+    },
+    "approval": {
+      "num": "1",
+      "type": "week"
+    },
+    "shopDrawing": {
+      "num": "1",
+      "type": "week"
+    },
+    "fabrication": {
+      "num": "4",
+      "type": "weeks"
+    }
+  },
+  "contract":{
+    "incotermName": "EXW",
+    "incotermYear": "2010",
+    "moneyText":"United States Dollars Ninety-Six Thousand Nine Hundred Eleven Only",
+    "currencyUnit": "USD",
+    "currency": 96911,
+    "location": "Dai Nghia Factory - Vietnam",
+
+    "payment": [
+      {
+        "percent": {
+          "num": 30,
+          "text": "thirty percent"
+        },
+        "percentText": "thirty percent",
+        "moneyInWord": "United States Dollar sixty-two thousand nine hundred ninety-two dollars and fifteen cents only",
+        "term": "Telegraphic Transfer (T/T)",
+        "date": {
+          "num": 7,
+          "text": "seven"
+        }
+      },
+      {
+        "percent": {
+          "num": 65,
+          "text": "sixty-five percent"
+        },
+        "moneyInWord": "United States Dollar twenty-nine thousand seventy-three dollars and thirty cents only",
+        "term": "Telegraphic Transfer (T/T)",
+        "date": {
+          "num": 7,
+          "text": "seven"
+        }
+      }
+    ],
+    "consignee": {
+      "company": "ER STEEL INC",
+      "address": "206-1511 DERWENT WAY, DELTA, BC, CANADA V3M 6N4"
+    },
+    "notifyParty": {
+      "company": "ER STEEL INC",
+      "address": "206-1511 DERWENT WAY, DELTA, BC, CANADA V3M 6N4"
+    },
+    "pol": "Ho Chi Minh City Port, Viet Nam",
+    "pod": "",
+    "shipmentTerms": "EXW (Ex Works) Dai Nghia Factory"
   }
 }
