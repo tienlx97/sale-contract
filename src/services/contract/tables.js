@@ -12,17 +12,40 @@ const {
   VerticalAlign,
 } = require('docx');
 const { BORDER_NONE, TABLE_DEFAULTS, COLS, USABLE_WIDTH, scaleColumnsTo, DXA, INDENT, FONT } = require('./docx-config');
+const { hbsMdToRuns } = require('../../utils/hbsMdToRuns');
 
-const rowLabelSepValue = (
-  label,
-  value,
-  { boldKey = false, boldValue = false, caplockLabel = false, caplockValue = false } = {}
-) =>
+// const rowLabelSepValue = (
+//   label,
+//   value,
+//   { boldKey = false, boldValue = false, caplockLabel = false, caplockValue = false } = {}
+// ) =>
+//   new TableRow({
+//     children: [
+//       new TableCell({
+//         borders: BORDER_NONE,
+//         children: [new Paragraph({ children: [new TextRun({ text: label, bold: boldKey, allCaps: caplockLabel })] })],
+//       }),
+//       new TableCell({
+//         borders: BORDER_NONE,
+//         children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: ':' })] })],
+//       }),
+//       new TableCell({
+//         borders: BORDER_NONE,
+//         children: [new Paragraph({ children: [new TextRun({ text: value, bold: boldValue, allCaps: caplockValue })] })],
+//       }),
+//     ],
+//   });
+
+const rowLabelSepValue = (label, value, markup, data) =>
   new TableRow({
     children: [
       new TableCell({
         borders: BORDER_NONE,
-        children: [new Paragraph({ children: [new TextRun({ text: label, bold: boldKey, allCaps: caplockLabel })] })],
+        children: [
+          new Paragraph({
+            children: hbsMdToRuns(label, undefined, { caplock: markup?.caplockLabel, bold: markup?.boldKey }),
+          }),
+        ],
       }),
       new TableCell({
         borders: BORDER_NONE,
@@ -30,7 +53,9 @@ const rowLabelSepValue = (
       }),
       new TableCell({
         borders: BORDER_NONE,
-        children: [new Paragraph({ children: [new TextRun({ text: value, bold: boldValue, allCaps: caplockValue })] })],
+        children: [
+          new Paragraph({ children: hbsMdToRuns(value, data, { caplock: markup?.caplockValue, bold: markup?.boldValue }) }),
+        ],
       }),
     ],
   });
@@ -38,12 +63,8 @@ const rowLabelSepValue = (
 const rowLabelSepValue2 = (
   label,
   value,
+  { boldKey = false, boldValue = false, caplockKey = false, caplockValue = false } = {},
   {
-    boldLabel = false,
-    boldValue = false,
-    caplockLabel = false,
-    caplockValue = false,
-
     heightRule = HeightRule.AUTO, // AUTO | ATLEAST | EXACT
     heightValue = 0, // twips; 0 = auto
   } = {}
@@ -57,7 +78,7 @@ const rowLabelSepValue2 = (
         children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: label, bold: boldLabel, allCaps: caplockLabel })],
+            children: hbsMdToRuns(label, undefined, { caplock: caplockKey, bold: boldKey }),
           }),
         ],
       }),
@@ -67,7 +88,7 @@ const rowLabelSepValue2 = (
         children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: value, bold: boldValue, allCaps: caplockValue })],
+            children: hbsMdToRuns(value, undefined, { caplock: caplockValue, bold: boldValue }),
           }),
         ],
       }),
@@ -83,7 +104,7 @@ const tableLabelSepValue = (rows) =>
   });
 
 // Project detail (centered 70% width)
-const projectDetailTable = (contractInformationTable /* [{key,value}] */) => {
+const projectDetailTable = (contractInformationTable) => {
   return [
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -103,7 +124,6 @@ const projectDetailTable = (contractInformationTable /* [{key,value}] */) => {
       columnWidths: COLS.LABEL_SEP_VALUE_2,
       alignment: AlignmentType.CENTER,
       rows: [
-        // pairs.map(({ key, value }) => rowLabelSepValue(key, value, { boldLabel: true, boldValue: true })),
         rowLabelSepValue(
           contractInformationTable.project.key,
           contractInformationTable.project.value,
@@ -124,8 +144,29 @@ const projectDetailTable = (contractInformationTable /* [{key,value}] */) => {
   ];
 };
 
-// Work detail table aligned under level-1 text (INDENT)
-const projectWorkDetailTable = ({ projectName, item, location, quotationDate }, indentLeftDXA = 1 * DXA.INCH) => {
+//  projectWorkDetails: {
+//     projectName: {
+//       key: '*. Project',
+//       value: 'Q-2025-059 Comstock Pond Cover',
+//       markup: {
+//         boldValue: true,
+//       },
+//     },
+//     location: {
+//       key: '*. Location',
+//       value: 'CANADA',
+//       markup: {
+//         boldValue: true,
+//         caplockValue: true,
+//       },
+//     },
+//     volOfWork: {
+//       key: '*. Volume of works',
+//       value:
+//         'As specified in Party B’s Quotation dated {{quotationDate}}, including the scope of quotation, the list of materials and applicable standards attached to this Contract, Party A’s architectural design drawings, and Party B’s steel structure design drawings as approved by Party A.',
+//     },
+//   },
+const projectWorkDetailTable = ({ projectWorkDetails, quotationDate }, indentLeftDXA = 1 * DXA.INCH) => {
   const tableWidth = USABLE_WIDTH - indentLeftDXA;
   const cols = scaleColumnsTo(COLS.LABEL_SEP_VALUE, tableWidth);
   return [
@@ -136,46 +177,29 @@ const projectWorkDetailTable = ({ projectName, item, location, quotationDate }, 
       columnWidths: cols,
       indent: { size: indentLeftDXA, type: WidthType.DXA },
       rows: [
-        rowLabelSepValue('*. Project', projectName, { boldValue: true }),
-        rowLabelSepValue('*. Item', item, { boldValue: true }),
-        rowLabelSepValue('*. Location', location, { boldValue: true }),
-        new TableRow({
-          children: [
-            new TableCell({
-              borders: BORDER_NONE,
-              children: [new Paragraph({ children: [new TextRun({ text: '*. Volume of works' })] })],
-            }),
-            new TableCell({ borders: BORDER_NONE, children: [new Paragraph({ children: [new TextRun({ text: ':' })] })] }),
-            new TableCell({
-              borders: BORDER_NONE,
-              children: [
-                new Paragraph({
-                  children: [
-                    new TextRun({ text: 'As specified in Party B’s Quotation dated ' }),
-                    new TextRun({ text: quotationDate }),
-                    new TextRun({
-                      text: ', including the scope of quotation, the list of materials and applicable standards attached to this Contract, Party A’s architectural design drawings, and Party B’s steel structure design drawings as approved by Party A.',
-                    }),
-                  ],
-                }),
-              ],
-            }),
-          ],
-        }),
+        rowLabelSepValue(
+          projectWorkDetails.projectName.key,
+          projectWorkDetails.projectName.value,
+          projectWorkDetails.projectName.markup
+        ),
+        rowLabelSepValue(projectWorkDetails.item.key, projectWorkDetails.item.value, projectWorkDetails.item.markup),
+        rowLabelSepValue(
+          projectWorkDetails.location.key,
+          projectWorkDetails.location.value,
+          projectWorkDetails.location.markup
+        ),
+        rowLabelSepValue(
+          projectWorkDetails.volOfWork.key,
+          projectWorkDetails.volOfWork.value,
+          projectWorkDetails.volOfWork.markup,
+          { quotationDate }
+        ),
       ],
     }),
 
     new Paragraph({
-      indent: { left: 1440 },
-      children: [
-        new TextRun('(Hereinafter referred to as '),
-        new TextRun({
-          text: '“The Project',
-          bold: true,
-        }),
-        new TextRun(')'),
-        new TextRun({ break: 1 }),
-      ],
+      indent: { left: INDENT.L1_LEFT },
+      children: hbsMdToRuns(projectWorkDetails.theProject),
     }),
   ];
 };
@@ -261,18 +285,11 @@ const createPartyATable = (partyA) => [
       rowLabelSepValue(partyA.represented.key, partyA.represented.value, partyA.represented.markup),
       rowLabelSepValue(partyA.position.key, partyA.position.value, partyA.position.markup),
       rowLabelSepValue(partyA.address.key, partyA.address.value, partyA.address.markup),
-      ...(partyA.optional && partyA.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup))),
+      partyA.optional && partyA.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup)),
     ],
   }),
   new Paragraph({
-    children: [
-      new TextRun('(Hereinafter referred to as '),
-      new TextRun({
-        text: 'Party A',
-        bold: true,
-      }),
-      new TextRun(')'),
-    ],
+    children: hbsMdToRuns(partyA.title),
   }),
   new Paragraph({
     children: [new TextRun('___')],
@@ -290,18 +307,11 @@ const createPartyBTable = (partyB) => [
       rowLabelSepValue(partyB.position.key, partyB.position.value, partyB.position.markup),
       rowLabelSepValue(partyB.address.key, partyB.address.value, partyB.address.markup),
       rowLabelSepValue(partyB.taxCode.key, partyB.taxCode.value, partyB.taxCode.markup),
-      ...(partyB.optional && partyB.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup))),
+      partyB.optional && partyB.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup)),
     ],
   }),
   new Paragraph({
-    children: [
-      new TextRun('(Hereinafter referred to as '),
-      new TextRun({
-        text: `Party B`,
-        bold: true,
-      }),
-      new TextRun(')'),
-    ],
+    children: hbsMdToRuns(partyB.title),
   }),
   new Paragraph({
     children: [new TextRun('___')],

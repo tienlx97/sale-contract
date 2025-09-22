@@ -27,6 +27,7 @@ const {
   createPartyBTable,
 } = require('./contract/tables');
 const { createFooter } = require('./contract/footer');
+const { hbsMdToRuns } = require('../utils/hbsMdToRuns');
 
 const body = {
   headerImagePath: 'assets/header/1.png',
@@ -34,6 +35,13 @@ const body = {
     text1: '18th September 2025',
     text2: '18th day of September 2025',
   },
+
+  dump: {
+    contractTitle: 'SALE CONTRACT',
+    1: 'This Contract is entered into on {{signDate.text2}} at the office of {{partyB.company.value}} between the two parties:',
+    2: 'After negotiation, both parties have mutually agreed to sign this contract (“**Contract**”) with the following terms and conditions:',
+  },
+
   contractInformationTable: {
     no: {
       key: 'No',
@@ -43,49 +51,42 @@ const body = {
       },
     },
     project: {
-      key: 'Project',
-      value: 'Q-2025-059 Comstock Pond Cover',
+      key: '**Project**',
+      value: '**Q-2025-059 Comstock Pond Cover**',
       markup: {
         caplockValue: true,
-        boldValue: true,
-        boldKey: true,
       },
     },
     item: {
-      key: 'Item',
-      value: 'STEEL STRUCTURE',
+      key: '**Item**',
+      value: '**STEEL STRUCTURE**',
       markup: {
         caplockValue: true,
-        boldValue: true,
-        boldKey: true,
       },
     },
     location: {
-      key: 'Location',
-      value: 'CANADA',
+      key: '**Location**',
+      value: '**CANADA**',
       markup: {
         caplock: true,
-        boldValue: true,
-        boldKey: true,
       },
     },
   },
   parties: {
     partyA: {
+      title: '(Hereinafter referred to as **Party A**)',
       company: {
-        key: 'PARTY A (BUYER)',
+        key: '**PARTY A (BUYER)**',
         value: 'ER STEEL INC.',
         markup: {
           caplockValue: true,
-          boldKey: true,
           boldValue: true,
         },
       },
       represented: {
-        key: 'Represented by',
+        key: '**Represented by**',
         value: 'Mr. Lloyd Kamlade',
         markup: {
-          boldKey: true,
           boldValue: true,
         },
       },
@@ -100,20 +101,20 @@ const body = {
       optional: undefined,
     },
     partyB: {
+      title: '(Hereinafter referred to as **Party B**)',
       company: {
-        key: 'PARTY B (CONTRACTOR)',
+        key: '**PARTY B (CONTRACTOR)**',
         value: 'DAI NGHIA INDUSTRIAL MECHANICS CO., LTD',
         markup: {
           caplockValue: true,
-          boldKey: true,
           boldValue: true,
         },
       },
       represented: {
-        key: 'Represented by',
-        value: 'MR. Le Xuan Nghia',
+        key: '**Represented by**',
+        value: '**MR. Le Xuan Nghia**',
         markup: {
-          boldKey: true,
+          caplockValue: true,
           boldValue: true,
         },
       },
@@ -135,16 +136,19 @@ const body = {
   projectWorkDetails: {
     projectName: {
       key: '*. Project',
-      value: 'Q-2025-059 Comstock Pond Cover',
+      value: '**Q-2025-059 Comstock Pond Cover**',
+    },
+    item: {
+      key: '*. Item',
+      value: '**STEEL STRUCTURE**',
       markup: {
-        boldValue: true,
+        caplockValue: true,
       },
     },
     location: {
       key: '*. Location',
-      value: 'CANADA',
+      value: '**CANADA**',
       markup: {
-        boldValue: true,
         caplockValue: true,
       },
     },
@@ -153,6 +157,7 @@ const body = {
       value:
         'As specified in Party B’s Quotation dated {{quotationDate}}, including the scope of quotation, the list of materials and applicable standards attached to this Contract, Party A’s architectural design drawings, and Party B’s steel structure design drawings as approved by Party A.',
     },
+    theProject: '(Herein after called as “**The Project**”)\n',
   },
   quotationDate: {
     text1: '17/09/2025',
@@ -318,6 +323,31 @@ const body = {
     pod: '',
     shipmentTerms: 'EXW (Ex Works) Dai Nghia Factory',
   },
+  articleObjectOfcontract: {
+    title_: 'THE OBJECT OF THE CONTRACT',
+    block: [
+      {
+        type: 'paragraph',
+        level: 1,
+        text: '**Detailed scope of works is as follows:**',
+      },
+      {
+        type: 'paragraph',
+        level: 2,
+        text: 'Party B carries out the following works:',
+      },
+      {
+        type: 'paragraph',
+        level: 3,
+        text: 'Steel structure',
+      },
+      {
+        type: 'paragraph',
+        level: 2,
+        text: 'Any work not expressly specified herein or not shown in the approved drawings shall be excluded from the scope of this Contract.',
+      },
+    ],
+  },
   articleauthorityAndResponsibilitiesOfPartyA: {
     title: 'AUTHORITY AND RESPONSIBILITIES OF PARTY A',
     block: [
@@ -330,6 +360,11 @@ const body = {
         type: 'paragraph',
         level: 1,
         text: 'To get full guarantee for Steel Structure from party B',
+      },
+      {
+        type: 'paragraph',
+        level: 3,
+        text: 'Steel structure',
       },
       {
         type: 'paragraph',
@@ -481,6 +516,56 @@ const body = {
 };
 
 /**
+ * Convert a block structure into docx Paragraphs
+ * @param {object} article
+ * @returns {Paragraph[]}
+ */
+function renderArticle(article) {
+  const paragraphs = [];
+
+  // Article title
+  if (article.title) {
+    paragraphs.push(
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 0 },
+        children: [new TextRun({ text: article.title, bold: true })],
+      })
+    );
+  }
+
+  article.block.forEach((b) => {
+    if (b.type === 'paragraph') {
+      // Regular numbered paragraph
+      paragraphs.push(
+        new Paragraph({
+          numbering: { reference: 'article-numbering', level: b.level },
+          children: hbsMdToRuns(b.text),
+        })
+      );
+    } else if (b.type === 'list') {
+      // Lead line (with numbering)
+      paragraphs.push(
+        new Paragraph({
+          numbering: { reference: 'article-numbering', level: b.level },
+          children: hbsMdToRuns(b.text),
+        })
+      );
+      // Items: chỉ indent, không numbering
+      b.items.forEach((item) => {
+        paragraphs.push(
+          new Paragraph({
+            indent: { left: INDENT.L1_LEFT }, // hoặc tuỳ chỉnh INDENT riêng cho list item
+            children: hbsMdToRuns(item),
+          })
+        );
+      });
+    }
+  });
+
+  return paragraphs;
+}
+
+/**
  * Create a contract
  * @param {Object} contractBody
  */
@@ -494,6 +579,10 @@ const createContract = async (contractBody) => {
     signDate,
     contractInformationTable,
     parties,
+    dump,
+    articleObjectOfcontract,
+    projectWorkDetails,
+    quotationDate,
     // contractDetails,
     // contractNo,
     // partyA,
@@ -724,38 +813,50 @@ const createContract = async (contractBody) => {
           default: createFooter(),
         },
         children: [
-          createHeaderImageParagraph(headerImagePath),
+          // createHeaderImageParagraph(headerImagePath),
           new Paragraph({
             alignment: AlignmentType.RIGHT,
             children: [new TextRun({ text: `Ho Chi Minh, ${String(signDate?.text1 ?? '')}`, size: FONT.SIZE_12 })],
           }),
           new Paragraph({
             alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: 'SALES CONTRACT', bold: true, size: FONT.SIZE_14 })],
+            children: [new TextRun({ text: dump.contractTitle, allCaps: true, bold: true, size: FONT.SIZE_14 })],
           }),
           ...projectDetailTable(contractInformationTable),
           new Paragraph({
-            children: [
-              new TextRun(
-                `This Contract is entered into on ${String(
-                  signDate?.text2 ?? ''
-                )} at the office of DAI NGHIA INDUSTRIAL MECHANICS CO., LTD between the two parties:`
-              ),
-            ],
+            children: hbsMdToRuns(dump[1], { signDate, partyB: parties.partyB }),
           }),
           ...createPartyATable(parties.partyA),
           ...createPartyBTable(parties.partyB),
           new Paragraph({
+            children: hbsMdToRuns(dump[2]),
+          }),
+
+          new Paragraph({
+            numbering: { reference: 'article-numbering', level: 0 },
             children: [
-              new TextRun('After negotiation, both parties have mutually agreed to sign this contract (“'),
               new TextRun({
-                text: 'Contract',
+                text: articleObjectOfcontract.title_,
+                allCaps: true,
                 bold: true,
+                color: FONT.COLOR_BLACK,
+                size: FONT.SIZE_14,
               }),
-              new TextRun('”) with the following terms and conditions:'),
-              new TextRun({ break: 1 }),
             ],
           }),
+          new Paragraph({
+            numbering: { reference: 'article-numbering', level: 1 },
+            children: [
+              new TextRun({
+                text: 'Party A agrees to engage Party B for the supply and execution of steel structure works as described below:',
+                bold: true,
+              }),
+            ],
+          }),
+          ...projectWorkDetailTable({ projectWorkDetails, quotationDate: quotationDate.text2 }, INDENT.L1_LEFT),
+
+          ...renderArticle(articleObjectOfcontract),
+
           // // ARTICLE 1
           // new Paragraph({
           //   numbering: { reference: 'article-numbering', level: 0 },
@@ -912,7 +1013,7 @@ const createContract = async (contractBody) => {
           //     }),
           //   ],
           // }),
-          ...createContractPeriod(),
+          // ...createContractPeriod(),
           // new Paragraph({
           //   numbering: { reference: 'article-numbering', level: 1 },
           //   children: [
