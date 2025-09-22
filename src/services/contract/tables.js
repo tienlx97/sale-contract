@@ -1,13 +1,28 @@
 // tables.js
-const { Table, TableRow, TableCell, Paragraph, TextRun, TableLayoutType, WidthType, AlignmentType } = require('docx');
-const { BORDER_NONE, TABLE_DEFAULTS, COLS, USABLE_WIDTH, scaleColumnsTo, DXA, INDENT } = require('./docx-config');
+const {
+  Table,
+  TableRow,
+  TableCell,
+  Paragraph,
+  TextRun,
+  TableLayoutType,
+  WidthType,
+  AlignmentType,
+  HeightRule,
+  VerticalAlign,
+} = require('docx');
+const { BORDER_NONE, TABLE_DEFAULTS, COLS, USABLE_WIDTH, scaleColumnsTo, DXA, INDENT, FONT } = require('./docx-config');
 
-const rowLabelSepValue = (label, value, { boldLabel = false, boldValue = false } = {}) =>
+const rowLabelSepValue = (
+  label,
+  value,
+  { boldKey = false, boldValue = false, caplockLabel = false, caplockValue = false } = {}
+) =>
   new TableRow({
     children: [
       new TableCell({
         borders: BORDER_NONE,
-        children: [new Paragraph({ children: [new TextRun({ text: label, bold: boldLabel })] })],
+        children: [new Paragraph({ children: [new TextRun({ text: label, bold: boldKey, allCaps: caplockLabel })] })],
       }),
       new TableCell({
         borders: BORDER_NONE,
@@ -15,7 +30,46 @@ const rowLabelSepValue = (label, value, { boldLabel = false, boldValue = false }
       }),
       new TableCell({
         borders: BORDER_NONE,
-        children: [new Paragraph({ children: [new TextRun({ text: value, bold: boldValue })] })],
+        children: [new Paragraph({ children: [new TextRun({ text: value, bold: boldValue, allCaps: caplockValue })] })],
+      }),
+    ],
+  });
+
+const rowLabelSepValue2 = (
+  label,
+  value,
+  {
+    boldLabel = false,
+    boldValue = false,
+    caplockLabel = false,
+    caplockValue = false,
+
+    heightRule = HeightRule.AUTO, // AUTO | ATLEAST | EXACT
+    heightValue = 0, // twips; 0 = auto
+  } = {}
+) =>
+  new TableRow({
+    height: { value: heightValue, rule: heightRule },
+    children: [
+      new TableCell({
+        borders: BORDER_NONE,
+        verticalAlign: VerticalAlign.TOP,
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: label, bold: boldLabel, allCaps: caplockLabel })],
+          }),
+        ],
+      }),
+      new TableCell({
+        borders: BORDER_NONE,
+        verticalAlign: VerticalAlign.TOP,
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: value, bold: boldValue, allCaps: caplockValue })],
+          }),
+        ],
       }),
     ],
   });
@@ -29,15 +83,46 @@ const tableLabelSepValue = (rows) =>
   });
 
 // Project detail (centered 70% width)
-const projectDetailTable = (pairs /* [{key,value}] */) =>
-  new Table({
-    ...TABLE_DEFAULTS,
-    layout: TableLayoutType.FIXED,
-    width: { size: 60, type: WidthType.PERCENTAGE },
-    columnWidths: COLS.LABEL_SEP_VALUE_2,
-    alignment: AlignmentType.CENTER,
-    rows: pairs.map(({ key, value }) => rowLabelSepValue(key, value, { boldLabel: true, boldValue: true })),
-  });
+const projectDetailTable = (contractInformationTable /* [{key,value}] */) => {
+  return [
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [
+        new TextRun({
+          text: `No: ${String(contractInformationTable.no.value ?? '')}`,
+          bold: true,
+          size: FONT.SIZE_14,
+          color: 'FF0000',
+        }),
+      ],
+    }),
+    new Table({
+      ...TABLE_DEFAULTS,
+      layout: TableLayoutType.FIXED,
+      width: { size: 60, type: WidthType.PERCENTAGE },
+      columnWidths: COLS.LABEL_SEP_VALUE_2,
+      alignment: AlignmentType.CENTER,
+      rows: [
+        // pairs.map(({ key, value }) => rowLabelSepValue(key, value, { boldLabel: true, boldValue: true })),
+        rowLabelSepValue(
+          contractInformationTable.project.key,
+          contractInformationTable.project.value,
+          contractInformationTable.project.markup
+        ),
+        rowLabelSepValue(
+          contractInformationTable.item.key,
+          contractInformationTable.item.value,
+          contractInformationTable.item.markup
+        ),
+        rowLabelSepValue(
+          contractInformationTable.location.key,
+          contractInformationTable.location.value,
+          contractInformationTable.location.markup
+        ),
+      ],
+    }),
+  ];
+};
 
 // Work detail table aligned under level-1 text (INDENT)
 const projectWorkDetailTable = ({ projectName, item, location, quotationDate }, indentLeftDXA = 1 * DXA.INCH) => {
@@ -136,31 +221,90 @@ const bankAccoutTable = (prop, indentLeftDXA = 1 * DXA.INCH) => {
   ];
 };
 
+const signinTable = ({ partyA, partyB }) => {
+  const tableWidth = USABLE_WIDTH;
+  const cols = scaleColumnsTo([4000, 6000], tableWidth);
+  return [
+    new Table({
+      ...TABLE_DEFAULTS,
+      layout: TableLayoutType.FIXED,
+      width: { size: tableWidth, type: WidthType.DXA },
+      columnWidths: cols,
+      rows: [
+        rowLabelSepValue2(partyA.company, partyB.company, {
+          boldValue: true,
+          boldLabel: true,
+          heightRule: HeightRule.ATLEAST, // or HeightRule.EXACT to force
+          heightValue: 720 * 3,
+        }),
+        rowLabelSepValue2(partyA.representedBy, partyB.representedBy, {
+          boldValue: true,
+          boldLabel: true,
+        }),
+        rowLabelSepValue2(partyA.position, partyB.position, {
+          boldValue: true,
+          boldLabel: true,
+        }),
+      ],
+    }),
+  ];
+};
+
 // === Party table (Party A / Party B details) ===
-const createPartyTable = (partyName, partyDetails, partyChar) => [
+const createPartyATable = (partyA) => [
   new Table({
     ...TABLE_DEFAULTS,
     layout: TableLayoutType.FIXED,
     columnWidths: COLS.LABEL_SEP_VALUE,
     rows: [
-      rowLabelSepValue(partyName.key, partyName.value, {
-        boldLabel: partyName.markup?.bold,
-        boldValue: partyName.markup?.bold,
-      }),
-      ...partyDetails.map((cd) =>
-        rowLabelSepValue(cd.key, cd.value, { boldLabel: cd.markup?.bold, boldValue: cd.markup?.bold })
-      ),
+      rowLabelSepValue(partyA.company.key, partyA.company.value, partyA.company.markup),
+      rowLabelSepValue(partyA.represented.key, partyA.represented.value, partyA.represented.markup),
+      rowLabelSepValue(partyA.position.key, partyA.position.value, partyA.position.markup),
+      rowLabelSepValue(partyA.address.key, partyA.address.value, partyA.address.markup),
+      ...(partyA.optional && partyA.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup))),
     ],
   }),
   new Paragraph({
     children: [
       new TextRun('(Hereinafter referred to as '),
       new TextRun({
-        text: `Party ${partyChar}`,
+        text: 'Party A',
         bold: true,
       }),
       new TextRun(')'),
     ],
+  }),
+  new Paragraph({
+    children: [new TextRun('___')],
+  }),
+];
+
+const createPartyBTable = (partyB) => [
+  new Table({
+    ...TABLE_DEFAULTS,
+    layout: TableLayoutType.FIXED,
+    columnWidths: COLS.LABEL_SEP_VALUE,
+    rows: [
+      rowLabelSepValue(partyB.company.key, partyB.company.value, partyB.company.markup),
+      rowLabelSepValue(partyB.represented.key, partyB.represented.value, partyB.represented.markup),
+      rowLabelSepValue(partyB.position.key, partyB.position.value, partyB.position.markup),
+      rowLabelSepValue(partyB.address.key, partyB.address.value, partyB.address.markup),
+      rowLabelSepValue(partyB.taxCode.key, partyB.taxCode.value, partyB.taxCode.markup),
+      ...(partyB.optional && partyB.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup))),
+    ],
+  }),
+  new Paragraph({
+    children: [
+      new TextRun('(Hereinafter referred to as '),
+      new TextRun({
+        text: `Party B`,
+        bold: true,
+      }),
+      new TextRun(')'),
+    ],
+  }),
+  new Paragraph({
+    children: [new TextRun('___')],
   }),
 ];
 
@@ -169,6 +313,8 @@ module.exports = {
   tableLabelSepValue,
   projectDetailTable,
   projectWorkDetailTable,
-  createPartyTable,
+  createPartyATable,
+  createPartyBTable,
   bankAccoutTable,
+  signinTable,
 };

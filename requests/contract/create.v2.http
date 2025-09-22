@@ -1,0 +1,150 @@
+POST http://localhost:3000/v1/contract
+Content-Type: application/json
+
+{
+  "signDate":{
+    "text1": "18th September 2025",
+    "text2": "18th day of September 2025"
+  },
+  "contractNo":"25KCT23",
+  "contractDetails": [
+    {
+       "key":"Project",
+       "value":"Q-2025-059 Comstock Pond Cover"
+    },
+    {
+       "key":"Item",
+       "value":"STEEL STRUCTURE"
+    },
+    {
+       "key":"Location",
+       "value":"CANADA"
+    }
+  ],
+  "partyA":{
+    "key": "PARTY A (BUYER)",
+    "value": "ER STEEL INC.",
+    "markup":{
+      "bold": true
+    }
+  },
+  "partyADetail": [
+    {
+      "key":"Represented by",
+      "value":"Mr. Lloyd Kamlade",
+      "markup":{
+        "bold": true
+      }
+    },
+    {
+      "key":"Position",
+      "value":"Chief Operating Officer"
+    },
+    {
+      "key":"Address",
+      "value":"206-1511 Derwent Way, Delta, BC, Canada V3M 6N4"
+    }
+  ],
+  "partyB":{
+    "key": "PARTY B (CONTRACTOR)",
+    "value": "DAI NGHIA INDUSTRIAL MECHANICS CO., LTD",
+    "markup":{
+      "bold": true
+    }
+  },
+  "partyBDetail": [
+    {
+      "key":"Represented by",
+      "value":"MR. LE XUAN NGHIA",
+      "markup":{
+        "bold": true
+      }
+    },
+    {
+      "key":"Position",
+      "value":"General Director"
+    },
+    {
+      "key":"Address",
+      "value":"No 5 Vsip II-A, Street 32, Viet Nam – Singapore II-A IZ, Vinh Tan Ward, Ho Chi Minh City Viet Nam"
+    },
+    {
+      "key":"Tax Code",
+      "value":"3702682454"
+    }
+  ],
+  "projectWorkDetails": {
+    "projectName": "Q-2025-059 Comstock Pond Cover",
+    "item": "STEEL STRUCTURE",
+    "location": "CANADA",
+    "quotationDate": "18th September 2025"
+  },
+  "quotationDate":{
+    "text1": "17/09/2025"
+  },
+  "contractPeriodPhrase":{
+    "preparation": {
+      "num": "1",
+      "type": "week"
+    },
+    "approval": {
+      "num": "1",
+      "type": "week"
+    },
+    "shopDrawing": {
+      "num": "1",
+      "type": "week"
+    },
+    "fabrication": {
+      "num": "4",
+      "type": "weeks"
+    }
+  },
+  "contract":{
+    "incotermName": "EXW",
+    "incotermYear": "2010",
+    "moneyText":"United States Dollars Ninety-Six Thousand Nine Hundred Eleven Only",
+    "currencyUnit": "USD",
+    "currency": 96911,
+    "location": "Dai Nghia Factory - Vietnam",
+
+    "payment": [
+      {
+        "percent": {
+          "num": 30,
+          "text": "thirty percent"
+        },
+        "percentText": "thirty percent",
+        "moneyInWord": "United States Dollar sixty-two thousand nine hundred ninety-two dollars and fifteen cents only",
+        "term": "Telegraphic Transfer (T/T)",
+        "date": {
+          "num": 7,
+          "text": "seven"
+        }
+      },
+      {
+        "percent": {
+          "num": 65,
+          "text": "sixty-five percent"
+        },
+        "moneyInWord": "United States Dollar twenty-nine thousand seventy-three dollars and thirty cents only",
+        "term": "Telegraphic Transfer (T/T)",
+        "date": {
+          "num": 7,
+          "text": "seven"
+        }
+      }
+    ],
+    "consignee": {
+      "company": "ER STEEL INC",
+      "address": "206-1511 DERWENT WAY, DELTA, BC, CANADA V3M 6N4"
+    },
+    "notifyParty": {
+      "company": "ER STEEL INC",
+      "address": "206-1511 DERWENT WAY, DELTA, BC, CANADA V3M 6N4"
+    },
+    "pol": "Ho Chi Minh City Port, Viet Nam",
+    "pod": "",
+    "shipmentTerms": "EXW (Ex Works) Dai Nghia Factory"
+  }
+}
