@@ -14,28 +14,6 @@ const {
 const { BORDER_NONE, TABLE_DEFAULTS, COLS, USABLE_WIDTH, scaleColumnsTo, DXA, INDENT, FONT } = require('./docx-config');
 const { hbsMdToRuns } = require('../../utils/hbsMdToRuns');
 
-// const rowLabelSepValue = (
-//   label,
-//   value,
-//   { boldKey = false, boldValue = false, caplockLabel = false, caplockValue = false } = {}
-// ) =>
-//   new TableRow({
-//     children: [
-//       new TableCell({
-//         borders: BORDER_NONE,
-//         children: [new Paragraph({ children: [new TextRun({ text: label, bold: boldKey, allCaps: caplockLabel })] })],
-//       }),
-//       new TableCell({
-//         borders: BORDER_NONE,
-//         children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: ':' })] })],
-//       }),
-//       new TableCell({
-//         borders: BORDER_NONE,
-//         children: [new Paragraph({ children: [new TextRun({ text: value, bold: boldValue, allCaps: caplockValue })] })],
-//       }),
-//     ],
-//   });
-
 const rowLabelSepValue = (label, value, markup, data) =>
   new TableRow({
     children: [
@@ -204,7 +182,7 @@ const projectWorkDetailTable = ({ projectWorkDetails, quotationDate }, indentLef
   ];
 };
 
-const bankAccoutTable = (prop, indentLeftDXA = 1 * DXA.INCH) => {
+const bankAccoutTable = (bankInformation, indentLeftDXA = 1 * DXA.INCH) => {
   const tableWidth = USABLE_WIDTH - indentLeftDXA;
   const cols = scaleColumnsTo(COLS.LABEL_SEP_VALUE_3, tableWidth);
   return [
@@ -215,20 +193,38 @@ const bankAccoutTable = (prop, indentLeftDXA = 1 * DXA.INCH) => {
       columnWidths: cols,
       indent: { size: indentLeftDXA, type: WidthType.DXA },
       rows: [
-        rowLabelSepValue('Beneficiary', 'DAI NGHIA INDUSTRIAL MECHANICS CO., LTD', { boldValue: true }),
-        rowLabelSepValue('Bank account No.', '1032407684', { boldValue: true }),
-        rowLabelSepValue('Bank', 'Joint Stock Commercial Bank Foreign Trade of Viet Nam', { boldValue: true }),
-        rowLabelSepValue('Branch', 'Tan Binh', { boldValue: true }),
-        rowLabelSepValue('Address', '108 Tay Thanh Street, Tay Thanh Ward, Ho Chi Minh City, Vietnam', { boldValue: true }),
-        rowLabelSepValue('SWIFT Code', 'BFTVVNVX044', { boldValue: true }),
+        rowLabelSepValue(
+          bankInformation.beneficiary.key,
+          bankInformation.beneficiary.value,
+          bankInformation.beneficiary.markup
+        ),
+        rowLabelSepValue(
+          bankInformation.bankAccountNo.key,
+          bankInformation.bankAccountNo.value,
+          bankInformation.bankAccountNo.markup
+        ),
+        rowLabelSepValue(bankInformation.bank.key, bankInformation.bank.value, bankInformation.bank.markup),
+        rowLabelSepValue(bankInformation.branch.key, bankInformation.branch.value, bankInformation.branch.markup),
+        rowLabelSepValue(bankInformation.address.key, bankInformation.address.value, bankInformation.beneficiary.markup),
+        rowLabelSepValue(bankInformation.swiftCode.key, bankInformation.swiftCode.value, bankInformation.swiftCode.markup),
       ],
     }),
+  ];
+};
 
+const requireDocumentTable = (requireDocument, indentLeftDXA = 1 * DXA.INCH) => {
+  const tableWidth = USABLE_WIDTH - indentLeftDXA;
+  const cols = scaleColumnsTo(COLS.LABEL_SEP_VALUE_3, tableWidth);
+  return [
     new Paragraph({
-      indent: { left: INDENT.L1_LEFT },
-      children: [new TextRun({ text: 'Required document including:', bold: true })],
+      numbering: { reference: 'article-numbering', level: 1 },
+      children: [
+        new TextRun({
+          text: 'Required document including:',
+          bold: true,
+        }),
+      ],
     }),
-
     new Table({
       ...TABLE_DEFAULTS,
       layout: TableLayoutType.FIXED,
@@ -236,10 +232,20 @@ const bankAccoutTable = (prop, indentLeftDXA = 1 * DXA.INCH) => {
       columnWidths: cols,
       indent: { size: indentLeftDXA, type: WidthType.DXA },
       rows: [
-        rowLabelSepValue('- Commercial Invoice', '01 original(s) electronic'),
-        rowLabelSepValue('- Packing list', '01 original(s) electronic'),
-        rowLabelSepValue('- Bill of Lading', '01 surrender Bill'),
-        rowLabelSepValue('- Certificate of Origin (Form D)', '01 original(s) electronic'),
+        rowLabelSepValue(
+          requireDocument.commercialInvoice.key,
+          requireDocument.commercialInvoice.value,
+          requireDocument.commercialInvoice.markup
+        ),
+        rowLabelSepValue(
+          requireDocument.packingList.key,
+          requireDocument.packingList.value,
+          requireDocument.packingList.markup
+        ),
+        rowLabelSepValue(requireDocument.bol.key, requireDocument.bol.value, requireDocument.bol.markup),
+        rowLabelSepValue(requireDocument.co.key, requireDocument.co.value, requireDocument.co.markup, {
+          form: requireDocument.co.form,
+        }),
       ],
     }),
   ];
@@ -255,19 +261,25 @@ const signinTable = ({ partyA, partyB }) => {
       width: { size: tableWidth, type: WidthType.DXA },
       columnWidths: cols,
       rows: [
-        rowLabelSepValue2(partyA.company, partyB.company, {
-          boldValue: true,
-          boldLabel: true,
-          heightRule: HeightRule.ATLEAST, // or HeightRule.EXACT to force
-          heightValue: 720 * 3,
-        }),
+        rowLabelSepValue2(
+          partyA.company,
+          partyB.company,
+          {
+            boldValue: true,
+            boldKey: true,
+          },
+          {
+            heightRule: HeightRule.ATLEAST, // or HeightRule.EXACT to force
+            heightValue: 720 * 3,
+          }
+        ),
         rowLabelSepValue2(partyA.representedBy, partyB.representedBy, {
           boldValue: true,
-          boldLabel: true,
+          boldKey: true,
         }),
         rowLabelSepValue2(partyA.position, partyB.position, {
           boldValue: true,
-          boldLabel: true,
+          boldKey: true,
         }),
       ],
     }),
@@ -327,4 +339,5 @@ module.exports = {
   createPartyBTable,
   bankAccoutTable,
   signinTable,
+  requireDocumentTable,
 };
