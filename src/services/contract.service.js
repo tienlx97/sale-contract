@@ -20,8 +20,8 @@ const { hbsMdToRuns } = require('../utils/hbsMdToRuns');
 const body = {
   headerImagePath: 'assets/header/1.png',
   signDate: {
-    text1: '18th September 2025',
-    text2: '18th day of September 2025',
+    text1: '26th September 2025',
+    text2: '26th day of September 2025',
   },
 
   dump: {
@@ -33,14 +33,14 @@ const body = {
   contractInformationTable: {
     no: {
       key: 'No',
-      value: '25KCT23',
+      value: '',
       markup: {
         color: 'FF0000',
       },
     },
     project: {
       key: '**Project**',
-      value: '**Q-2025-059 Comstock Pond Cover**',
+      value: '**TWO STOREY**',
       markup: {
         caplockValue: true,
       },
@@ -54,7 +54,7 @@ const body = {
     },
     location: {
       key: '**Location**',
-      value: '**CANADA**',
+      value: '**PHILIPPINES**',
       markup: {
         caplock: true,
       },
@@ -65,7 +65,7 @@ const body = {
       title: '(Hereinafter referred to as **Party A**)',
       company: {
         key: '**PARTY A (BUYER)**',
-        value: 'ER STEEL INC.',
+        value: 'UNIMORE TRADING CORPORATION',
         markup: {
           caplockValue: true,
           boldValue: true,
@@ -73,20 +73,25 @@ const body = {
       },
       represented: {
         key: '**Represented by**',
-        value: 'Mr. Lloyd Kamlade',
+        value: 'Mr. Fenton Chua',
         markup: {
           boldValue: true,
         },
       },
       position: {
         key: 'Position',
-        value: 'Chief Operating Officer',
+        value: 'President',
       },
       address: {
         key: 'Address',
-        value: '206-1511 Derwent Way, Delta, BC, Canada V3M 6N4',
+        value: 'Unit C 18th Flr Lafayette 3, Eastwood city, Bagumbayan, Quezon city, Philippines',
       },
-      optional: undefined,
+      optional: [
+        {
+          key: 'Tel',
+          value: '(+632) 718-5291',
+        },
+      ],
     },
     partyB: {
       title: '(Hereinafter referred to as **Party B**)',
@@ -118,13 +123,13 @@ const body = {
         key: 'Tax Code',
         value: '3702682454',
       },
-      optional: undefined,
+      optional: [],
     },
   },
   projectWorkDetails: {
     projectName: {
       key: '*. Project',
-      value: '**Q-2025-059 Comstock Pond Cover**',
+      value: '**TWO STOREY**',
     },
     item: {
       key: '*. Item',
@@ -135,7 +140,7 @@ const body = {
     },
     location: {
       key: '*. Location',
-      value: '**CANADA**',
+      value: '**PHILIPPINES**',
       markup: {
         caplockValue: true,
       },
@@ -148,8 +153,8 @@ const body = {
     theProject: '(Herein after called as “**The Project**”)\n',
   },
   quotationDate: {
-    text1: '17/09/2025',
-    text2: '18th September 2025',
+    text1: '24/09/2025',
+    text2: '24th September 2025',
   },
   contractPeriodPhrase: {
     preparation: {
@@ -168,13 +173,13 @@ const body = {
       text: '{{contractPeriodPhrase.shopDrawing.num}} {{contractPeriodPhrase.shopDrawing.type}} for preparation of shop drawings.',
     },
     fabrication: {
-      num: '4',
+      num: '6',
       type: 'weeks',
       text: '{{contractPeriodPhrase.fabrication.num}} {{contractPeriodPhrase.fabrication.type}} fabrication period reckoned from the date the approval drawings are approved.',
     },
     //
     transportation: {
-      num: '4',
+      num: '1',
       type: 'weeks',
       text: '{{contractPeriodPhrase.transportation.num}} {{contractPeriodPhrase.transportation.type}} for transportation from factory to {{transportationLocation}}',
     },
@@ -187,18 +192,18 @@ const body = {
       FOB: 'The Contract Value is a lump sum, covering all costs related to **fabrication, packing, inland transportation to the port of loading, export customs clearance, loading onto the vessel, and warranty**. All costs beyond loading on board the vessel, including **ocean freight, marine insurance, import duties, and taxes at the country of destination **, shall be borne solely by Party A (the Buyer). The Contract Price shall not be subject to remeasurement of quantities.',
     },
     incoterm: {
-      name: 'EXW',
+      name: 'CIF',
       year: '2010',
     },
     valueText: 'The Contract Value is: **{{contract.money.unit}} {{contractMoneyCurrency}}** *({{contract.money.text}})*.',
     deliveryTermText:
       'Delivery term: **{{contract.incoterm.name}} {{contract.location}}, Incoterms® {{contract.incoterm.year}}**.',
     money: {
-      text: 'United States Dollars Ninety-Six Thousand Nine Hundred Eleven Only',
+      text: 'United States Dollars forty-eight thousand Only',
       unit: 'USD',
-      currency: 96911,
+      currency: 48000,
     },
-    location: 'Dai Nghia Factory - Vietnam',
+    location: 'Manila Port - Philippines',
     payment: [
       {
         paymentPercentText:
@@ -215,9 +220,8 @@ const body = {
           num: 30,
           text: 'thirty percent',
         },
-        percentText: 'thirty percent',
         money: {
-          text: 'United States Dollar sixty-two thousand nine hundred ninety-two dollars and fifteen cents only',
+          text: 'United States Dollars fourteen thousand four hundred only',
         },
         term: 'Telegraphic Transfer (T/T)',
         date: {
@@ -233,12 +237,12 @@ const body = {
         termText:
           'by {{contract.payment.[1].term}} within {{contract.payment.[1].date.num}} ({{contract.payment.[1].date.text}}) calendar days after completion of inspection at Party B’s factory in Vietnam and prior to shipment release.',
         percent: {
-          num: 65,
-          text: 'sixty-five percent',
+          num: 70,
+          text: 'seventy percent',
         },
         moneyTextInword: '*(In words: {{contract.payment.[1].money.text}})*',
         money: {
-          text: 'United States Dollar twenty-nine thousand seventy-three dollars and thirty cents only',
+          text: 'United States Dollars thirty-three thousand six hundred only',
         },
         term: 'Telegraphic Transfer (T/T)',
         date: {
@@ -247,24 +251,24 @@ const body = {
         },
       },
     ],
-    paymentAppend: [
-      {
-        title:
-          'The final payment (Upon Delivery in Canada): The remaining {{contract.paymentAppend.[0].percent.text}} ({{contract.paymentAppend.[0].percent.num}}%) balance shall be paid by Party A to Party B upon successful delivery of the goods to the destination in Canada.',
-        paymentValueText:
-          '{{contract.money.unit}} {{contractCurrencyFormat}} x {{contract.paymentAppend.[0].percent.num}}% = {{contract.money.unit}} {{appendPaymentValue}}',
-        termText: 'by {{contract.paymentAppend.[0].term}}',
-        moneyTextInword: '*(In words: {{contract.paymentAppend.[0].money.text}})*',
-        percent: {
-          num: 5,
-          text: 'five percent',
-        },
-        money: {
-          text: 'United States Dollars four thousand eight hundred forty-five dollars and fifty-five cents only',
-        },
-        term: 'By T/T upon delivery in Canada.',
-      },
-    ],
+    // paymentAppend: [
+    //   {
+    //     title:
+    //       'The final payment (Upon Delivery in Canada): The remaining {{contract.paymentAppend.[0].percent.text}} ({{contract.paymentAppend.[0].percent.num}}%) balance shall be paid by Party A to Party B upon successful delivery of the goods to the destination in Canada.',
+    //     paymentValueText:
+    //       '{{contract.money.unit}} {{contractCurrencyFormat}} x {{contract.paymentAppend.[0].percent.num}}% = {{contract.money.unit}} {{appendPaymentValue}}',
+    //     termText: 'by {{contract.paymentAppend.[0].term}}',
+    //     moneyTextInword: '*(In words: {{contract.paymentAppend.[0].money.text}})*',
+    //     percent: {
+    //       num: 5,
+    //       text: 'five percent',
+    //     },
+    //     money: {
+    //       text: 'United States Dollars four thousand eight hundred forty-five dollars and fifty-five cents only',
+    //     },
+    //     term: 'By T/T upon delivery in Canada.',
+    //   },
+    // ],
     bankInformation: {
       beneficiary: {
         key: 'Beneficiary',
@@ -282,7 +286,7 @@ const body = {
       },
       bank: {
         key: 'Bank',
-        value: 'Joint Stock Commercial Bank Foreign Trade of Viet Nam',
+        value: 'Joint Stock Commercial Bank for Foreign Trade of Viet Nam',
         markup: {
           boldValue: true,
         },
@@ -312,7 +316,7 @@ const body = {
     requireDocument: {
       commercialInvoice: {
         key: '- Commercial Invoice',
-        value: 'Commercial Invoice',
+        value: '01 original(s) electronic',
       },
       packingList: {
         key: '- Packing list',
@@ -323,23 +327,23 @@ const body = {
         value: '01 surrender Bill',
       },
       co: {
-        key: '- Certificate of Origin (Form {{form}})',
+        key: '- Certificate of Origin (Form D)',
         form: 'D',
         value: '01 original(s) electronic',
       },
     },
     packing: 'Steel members shall be packed into containers as per Dai Nghia packing practice.',
     consignee: {
-      company: 'ER STEEL INC',
-      address: '206-1511 DERWENT WAY, DELTA, BC, CANADA V3M 6N4',
+      company: 'UNIMORE TRADING CORPORATION',
+      address: 'Unit C 18th Flr Lafayette 3, Eastwood city, Bagumbayan, Quezon city, Philippines',
     },
     notifyParty: {
-      company: 'ER STEEL INC',
-      address: '206-1511 DERWENT WAY, DELTA, BC, CANADA V3M 6N4',
+      company: 'EDUARD QUIAMBAO',
+      address: '18C LAFAYETTE 3 EASTWOOD CITY C5 LIBIS QUEZON CITY METRO MANILA 1110 PHILIPPINES\nTEL: +639175151695',
     },
     pol: 'Ho Chi Minh City Port, Viet Nam',
-    pod: '',
-    shipmentTerms: 'EXW (Ex Works) Dai Nghia Factory',
+    pod: 'Manila port - Philippines',
+    shipmentTerms: 'CIF Manila port - Philippines',
   },
   articleObjectOfcontract: {
     title_: 'THE OBJECT OF THE CONTRACT',

@@ -297,7 +297,7 @@ const createPartyATable = (partyA) => [
       rowLabelSepValue(partyA.represented.key, partyA.represented.value, partyA.represented.markup),
       rowLabelSepValue(partyA.position.key, partyA.position.value, partyA.position.markup),
       rowLabelSepValue(partyA.address.key, partyA.address.value, partyA.address.markup),
-      partyA.optional && partyA.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup)),
+      ...(partyA.optional && partyA.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup))),
     ],
   }),
   new Paragraph({
@@ -319,7 +319,7 @@ const createPartyBTable = (partyB) => [
       rowLabelSepValue(partyB.position.key, partyB.position.value, partyB.position.markup),
       rowLabelSepValue(partyB.address.key, partyB.address.value, partyB.address.markup),
       rowLabelSepValue(partyB.taxCode.key, partyB.taxCode.value, partyB.taxCode.markup),
-      partyB.optional && partyB.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup)),
+      ...(partyB.optional && partyB.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup))),
     ],
   }),
   new Paragraph({
