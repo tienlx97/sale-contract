@@ -20,8 +20,8 @@ const { hbsMdToRuns } = require('../utils/hbsMdToRuns');
 const body = {
   headerImagePath: 'assets/header/1.png',
   signDate: {
-    text1: '26th September 2025',
-    text2: '26th day of September 2025',
+    text1: '27th September 2025',
+    text2: '27th day of September 2025',
   },
 
   dump: {
@@ -40,7 +40,7 @@ const body = {
     },
     project: {
       key: '**Project**',
-      value: '**TWO STOREY**',
+      value: '**WH 20x25**',
       markup: {
         caplockValue: true,
       },
@@ -54,7 +54,7 @@ const body = {
     },
     location: {
       key: '**Location**',
-      value: '**PHILIPPINES**',
+      value: '**THAILAND**',
       markup: {
         caplock: true,
       },
@@ -65,7 +65,7 @@ const body = {
       title: '(Hereinafter referred to as **Party A**)',
       company: {
         key: '**PARTY A (BUYER)**',
-        value: 'UNIMORE TRADING CORPORATION',
+        value: 'BANGSUE ENGINEERING CO., LTD',
         markup: {
           caplockValue: true,
           boldValue: true,
@@ -73,25 +73,20 @@ const body = {
       },
       represented: {
         key: '**Represented by**',
-        value: 'Mr. Fenton Chua',
+        value: 'MR. PIYARAT SUWANNAKHA',
         markup: {
           boldValue: true,
         },
       },
       position: {
         key: 'Position',
-        value: 'President',
+        value: 'Manager',
       },
       address: {
         key: 'Address',
-        value: 'Unit C 18th Flr Lafayette 3, Eastwood city, Bagumbayan, Quezon city, Philippines',
+        value: '157 Moo 5, Mahasawat, Bangkruai, Nonthaburi, Thailand 11130',
       },
-      optional: [
-        {
-          key: 'Tel',
-          value: '(+632) 718-5291',
-        },
-      ],
+      optional: [],
     },
     partyB: {
       title: '(Hereinafter referred to as **Party B**)',
@@ -129,7 +124,7 @@ const body = {
   projectWorkDetails: {
     projectName: {
       key: '*. Project',
-      value: '**TWO STOREY**',
+      value: '**DIY PROJECT**',
     },
     item: {
       key: '*. Item',
@@ -140,7 +135,7 @@ const body = {
     },
     location: {
       key: '*. Location',
-      value: '**PHILIPPINES**',
+      value: '**THAILAND**',
       markup: {
         caplockValue: true,
       },
@@ -153,8 +148,8 @@ const body = {
     theProject: '(Herein after called as “**The Project**”)\n',
   },
   quotationDate: {
-    text1: '24/09/2025',
-    text2: '24th September 2025',
+    text1: '22/09/2025',
+    text2: '22nd September 2025',
   },
   contractPeriodPhrase: {
     preparation: {
@@ -199,11 +194,11 @@ const body = {
     deliveryTermText:
       'Delivery term: **{{contract.incoterm.name}} {{contract.location}}, Incoterms® {{contract.incoterm.year}}**.',
     money: {
-      text: 'United States Dollars forty-eight thousand Only',
+      text: 'United States Dollars Twenty Two Thousand Eight Hundred Only',
       unit: 'USD',
-      currency: 48000,
+      currency: 22800,
     },
-    location: 'Manila Port - Philippines',
+    location: 'Bangkok Port - Thailand',
     payment: [
       {
         paymentPercentText:
@@ -221,7 +216,7 @@ const body = {
           text: 'thirty percent',
         },
         money: {
-          text: 'United States Dollars fourteen thousand four hundred only',
+          text: 'United States Dollars Six Thousand Eight Hundred Forty Only',
         },
         term: 'Telegraphic Transfer (T/T)',
         date: {
@@ -242,7 +237,7 @@ const body = {
         },
         moneyTextInword: '*(In words: {{contract.payment.[1].money.text}})*',
         money: {
-          text: 'United States Dollars thirty-three thousand six hundred only',
+          text: 'United States Dollars Fifteen Thousand Nine Hundred Sixty Only',
         },
         term: 'Telegraphic Transfer (T/T)',
         date: {
@@ -334,16 +329,16 @@ const body = {
     },
     packing: 'Steel members shall be packed into containers as per Dai Nghia packing practice.',
     consignee: {
-      company: 'UNIMORE TRADING CORPORATION',
-      address: 'Unit C 18th Flr Lafayette 3, Eastwood city, Bagumbayan, Quezon city, Philippines',
+      company: 'BANGSUE ENGINEERING CO., LTD',
+      address: '157 Moo 5, Mahasawat, Bangkruai, Nonthaburi, Thailand 11130',
     },
     notifyParty: {
-      company: 'EDUARD QUIAMBAO',
-      address: '18C LAFAYETTE 3 EASTWOOD CITY C5 LIBIS QUEZON CITY METRO MANILA 1110 PHILIPPINES\nTEL: +639175151695',
+      company: 'BANGSUE ENGINEERING CO., LTD',
+      address: '157 Moo 5, Mahasawat, Bangkruai, Nonthaburi, Thailand 11130',
     },
     pol: 'Ho Chi Minh City Port, Viet Nam',
-    pod: 'Manila port - Philippines',
-    shipmentTerms: 'CIF Manila port - Philippines',
+    pod: 'CIF Bangkok Port - Thailand',
+    shipmentTerms: 'CIF Bangkok Port - Thailand',
   },
   articleObjectOfcontract: {
     title_: 'THE OBJECT OF THE CONTRACT',
@@ -1090,7 +1085,7 @@ const createContract = async (contractBody) => {
         document: {
           run: {
             font: FONT.FAMILY,
-            size: FONT.SIZE_12,
+            size: FONT.SIZE_14,
           },
           paragraph: {
             spacing: PARAGRAPH_SPACING,

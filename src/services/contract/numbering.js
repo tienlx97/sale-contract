@@ -19,7 +19,7 @@ const numberingConfig = {
           alignment: AlignmentType.LEFT,
 
           style: {
-            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_14, underline: true },
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_16, underline: true },
           },
         },
         // Level 1: %1.%2

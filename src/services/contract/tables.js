@@ -184,7 +184,7 @@ const projectWorkDetailTable = ({ projectWorkDetails, quotationDate }, indentLef
 
 const bankAccoutTable = (bankInformation, indentLeftDXA = 1 * DXA.INCH) => {
   const tableWidth = USABLE_WIDTH - indentLeftDXA;
-  const cols = scaleColumnsTo(COLS.LABEL_SEP_VALUE_3, tableWidth);
+  const cols = scaleColumnsTo(COLS.LABEL_SEP_VALUE_4, tableWidth);
   return [
     new Table({
       ...TABLE_DEFAULTS,

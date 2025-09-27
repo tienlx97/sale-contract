@@ -15,7 +15,14 @@ const PAGE = {
 const USABLE_WIDTH = PAGE.A4_WIDTH - PAGE.MARGIN.LEFT - PAGE.MARGIN.RIGHT;
 
 // === Typography ===
-const FONT = { FAMILY: 'Times New Roman', SIZE_12: 24, SIZE_14: 28, COLOR_BLACK: '000000', COLOR_RED: 'FF0000' };
+const FONT = {
+  FAMILY: 'Century Schoolbook',
+  SIZE_12: 24,
+  SIZE_14: 28,
+  SIZE_16: 32,
+  COLOR_BLACK: '000000',
+  COLOR_RED: 'FF0000',
+};
 const PARAGRAPH_SPACING = { line: 240, lineRule: LineRuleType.AUTO, before: 120, after: 120 }; // single + 6pt
 
 // === Common indents (so you change once) ===
@@ -54,6 +61,7 @@ const COLS = {
   LABEL_SEP_VALUE: [3500, 400, 7500],
   LABEL_SEP_VALUE_2: [2000, 400, 7500],
   LABEL_SEP_VALUE_3: [5000, 400, 7500],
+  LABEL_SEP_VALUE_4: [3000, 400, 7500],
 };
 
 // === Helpers ===
