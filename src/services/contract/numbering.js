@@ -19,7 +19,7 @@ const numberingConfig = {
           alignment: AlignmentType.LEFT,
 
           style: {
-            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_16, underline: true },
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_15, underline: true },
           },
         },
         // Level 1: %1.%2
@@ -31,7 +31,7 @@ const numberingConfig = {
           alignment: AlignmentType.LEFT,
 
           style: {
-            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_12 },
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_13 },
             paragraph: {
               indent: { left: INDENT.L1_LEFT, hanging: INDENT.L1_GAP },
             },
@@ -46,7 +46,7 @@ const numberingConfig = {
           alignment: AlignmentType.LEFT,
 
           style: {
-            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_12 },
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_13 },
             paragraph: {
               indent: { left: INDENT.L2_LEFT_FROM_L1_TEXT, hanging: INDENT.L2_GAP },
             },
@@ -60,7 +60,7 @@ const numberingConfig = {
           suffix: LevelSuffix.SPACE,
           alignment: AlignmentType.LEFT,
           style: {
-            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_12 },
+            run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_13 },
             paragraph: {
               indent: { left: INDENT.BULLET_LEFT, hanging: INDENT.BULLET_GAP },
             },

@@ -16,10 +16,14 @@ const USABLE_WIDTH = PAGE.A4_WIDTH - PAGE.MARGIN.LEFT - PAGE.MARGIN.RIGHT;
 
 // === Typography ===
 const FONT = {
-  FAMILY: 'Century Schoolbook',
+  FAMILY: 'Century Schoolbook', // 'Times New Roman', // 'Century Schoolbook',
   SIZE_12: 24,
+  SIZE_13: 26,
   SIZE_14: 28,
+  SIZE_15: 30,
   SIZE_16: 32,
+  SIZE_18: 34,
+
   COLOR_BLACK: '000000',
   COLOR_RED: 'FF0000',
 };
@@ -62,6 +66,7 @@ const COLS = {
   LABEL_SEP_VALUE_2: [2000, 400, 7500],
   LABEL_SEP_VALUE_3: [5000, 400, 7500],
   LABEL_SEP_VALUE_4: [3000, 400, 7500],
+  LABEL_SEP_VALUE_5: [6000, 400, 7500],
 };
 
 // === Helpers ===

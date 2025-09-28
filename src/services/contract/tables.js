@@ -21,7 +21,7 @@ const rowLabelSepValue = (label, value, markup, data) =>
         borders: BORDER_NONE,
         children: [
           new Paragraph({
-            children: hbsMdToRuns(label, undefined, { caplock: markup?.caplockLabel, bold: markup?.boldKey }),
+            children: hbsMdToRuns(label, undefined, { caplock: markup?.caplocKey, bold: markup?.boldKey }),
           }),
         ],
       }),
@@ -90,7 +90,6 @@ const projectDetailTable = (contractInformationTable) => {
         new TextRun({
           text: `No: ${String(contractInformationTable.no.value ?? '')}`,
           bold: true,
-          size: FONT.SIZE_14,
           color: 'FF0000',
         }),
       ],
@@ -198,15 +197,11 @@ const bankAccoutTable = (bankInformation, indentLeftDXA = 1 * DXA.INCH) => {
           bankInformation.beneficiary.value,
           bankInformation.beneficiary.markup
         ),
-        rowLabelSepValue(
-          bankInformation.bankAccountNo.key,
-          bankInformation.bankAccountNo.value,
-          bankInformation.bankAccountNo.markup
-        ),
-        rowLabelSepValue(bankInformation.bank.key, bankInformation.bank.value, bankInformation.bank.markup),
+        rowLabelSepValue(bankInformation.accountNo.key, bankInformation.accountNo.value, bankInformation.accountNo.markup),
+        rowLabelSepValue(bankInformation.bankName.key, bankInformation.bankName.value, bankInformation.bankName.markup),
         rowLabelSepValue(bankInformation.branch.key, bankInformation.branch.value, bankInformation.branch.markup),
         rowLabelSepValue(bankInformation.address.key, bankInformation.address.value, bankInformation.beneficiary.markup),
-        rowLabelSepValue(bankInformation.swiftCode.key, bankInformation.swiftCode.value, bankInformation.swiftCode.markup),
+        rowLabelSepValue(bankInformation.swift.key, bankInformation.swift.value, bankInformation.swift.markup),
       ],
     }),
   ];
@@ -231,22 +226,7 @@ const requireDocumentTable = (requireDocument, indentLeftDXA = 1 * DXA.INCH) => 
       width: { size: tableWidth, type: WidthType.DXA },
       columnWidths: cols,
       indent: { size: indentLeftDXA, type: WidthType.DXA },
-      rows: [
-        rowLabelSepValue(
-          requireDocument.commercialInvoice.key,
-          requireDocument.commercialInvoice.value,
-          requireDocument.commercialInvoice.markup
-        ),
-        rowLabelSepValue(
-          requireDocument.packingList.key,
-          requireDocument.packingList.value,
-          requireDocument.packingList.markup
-        ),
-        rowLabelSepValue(requireDocument.bol.key, requireDocument.bol.value, requireDocument.bol.markup),
-        rowLabelSepValue(requireDocument.co.key, requireDocument.co.value, requireDocument.co.markup, {
-          form: requireDocument.co.form,
-        }),
-      ],
+      rows: [...requireDocument.map((doc) => rowLabelSepValue(doc.key, doc.value))],
     }),
   ];
 };
@@ -294,7 +274,7 @@ const createPartyATable = (partyA) => [
     columnWidths: COLS.LABEL_SEP_VALUE,
     rows: [
       rowLabelSepValue(partyA.company.key, partyA.company.value, partyA.company.markup),
-      rowLabelSepValue(partyA.represented.key, partyA.represented.value, partyA.represented.markup),
+      rowLabelSepValue(partyA.representedBy.key, partyA.representedBy.value, partyA.representedBy.markup),
       rowLabelSepValue(partyA.position.key, partyA.position.value, partyA.position.markup),
       rowLabelSepValue(partyA.address.key, partyA.address.value, partyA.address.markup),
       ...(partyA.optional && partyA.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup))),
@@ -315,7 +295,7 @@ const createPartyBTable = (partyB) => [
     columnWidths: COLS.LABEL_SEP_VALUE,
     rows: [
       rowLabelSepValue(partyB.company.key, partyB.company.value, partyB.company.markup),
-      rowLabelSepValue(partyB.represented.key, partyB.represented.value, partyB.represented.markup),
+      rowLabelSepValue(partyB.representedBy.key, partyB.representedBy.value, partyB.representedBy.markup),
       rowLabelSepValue(partyB.position.key, partyB.position.value, partyB.position.markup),
       rowLabelSepValue(partyB.address.key, partyB.address.value, partyB.address.markup),
       rowLabelSepValue(partyB.taxCode.key, partyB.taxCode.value, partyB.taxCode.markup),
