@@ -2,6 +2,8 @@ const express = require('express');
 const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
 const contractRoute = require('./contract.route');
+const paymentRequestRoute = require('./payment-request.route');
+
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
 
@@ -19,6 +21,10 @@ const defaultRoutes = [
   {
     path: '/contract',
     route: contractRoute,
+  },
+  {
+    path: '/payment-request',
+    route: paymentRequestRoute,
   },
 ];
 

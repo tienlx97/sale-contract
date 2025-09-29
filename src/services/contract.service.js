@@ -2,6 +2,7 @@
 /* eslint-disable no-restricted-syntax */
 const { Document, Packer, Paragraph, TextRun, AlignmentType } = require('docx');
 const fs = require('fs');
+const libre = require('libreoffice-convert');
 const { FONT, PARAGRAPH_SPACING, PAGE, INDENT } = require('./contract/docx-config');
 const { numberingConfig } = require('./contract/numbering');
 const { createHeaderImageParagraph } = require('./contract/header');
@@ -15,7 +16,7 @@ const {
 } = require('./contract/tables');
 const { createFooter } = require('./contract/footer');
 const { hbsMdToRuns } = require('../utils/hbsMdToRuns');
-const { DEFAULT_CONTRACT_VALUE, EX_BODY } = require('../constant/contract');
+const { DEFAULT_CONTRACT_VALUE } = require('../constant/contract');
 const {
   formatDayMonthYear,
   formatTheDayOf,
@@ -277,7 +278,7 @@ function createPaymentArticle({ appendPayments, commercial, payments }, { format
  * Create a contract
  * @param {Object} contractBody
  */
-const createContract = async (contractBody) => {
+const buildDoc = async (contractBody) => {
   // eslint-disable-next-line no-param-reassign
 
   // eslint-disable-next-line no-unused-vars
@@ -349,7 +350,7 @@ const createContract = async (contractBody) => {
           default: createFooter(),
         },
         children: [
-          // createHeaderImageParagraph(headerImagePath),
+          createHeaderImageParagraph(headerImagePath),
           new Paragraph({
             alignment: AlignmentType.RIGHT,
             children: [new TextRun({ text: `Ho Chi Minh, ${signedDateInWords.t1}` })],
@@ -579,10 +580,34 @@ const createContract = async (contractBody) => {
     ],
   });
 
-  const buf = await Packer.toBuffer(doc);
-  fs.writeFileSync('file.docx', buf);
-  // eslint-disable-next-line no-console
-  console.log('Document created successfully!');
+  return doc;
 };
 
-module.exports = { createContract };
+/** Convert DOCX buffer -> PDF buffer using LibreOffice (if available) */
+async function convertDocxToPdfBuffer(docxBuffer) {
+  if (!libre) throw new Error('PDF conversion requires libreoffice-convert and LibreOffice installed');
+  return new Promise((resolve, reject) => {
+    libre.convert(docxBuffer, '.pdf', undefined, (err, done) => (err ? reject(err) : resolve(done)));
+  });
+}
+
+/**
+ * Main: return Buffer (docx or pdf)
+ * @param {Object} contractBody
+ * @param {{format?: 'docx'|'pdf'}} options
+ */
+async function createContractBuffer(contractBody, options = {}) {
+  const { format = 'pdf' } = options;
+  const doc = await buildDoc(contractBody);
+  const docxBuffer = await Packer.toBuffer(doc);
+  fs.writeFileSync('file.docx', docxBuffer);
+  if (format === 'docx') {
+    return docxBuffer;
+  }
+  if (format === 'pdf') {
+    return convertDocxToPdfBuffer(docxBuffer);
+  }
+  throw new Error(`Unsupported format: ${format}`);
+}
+
+module.exports = { createContractBuffer };

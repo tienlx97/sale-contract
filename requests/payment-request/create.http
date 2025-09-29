@@ -1,0 +1,12 @@
+POST http://localhost:5000/v1/payment-request
+Content-Type: application/json
+
+{
+  "signDate": "2025-09-29",
+  "payment": {
+    "num": 1
+  },
+  "no": "25KCT28.PR.01",
+  "company": "BANGSUE ENGINEERING CO., LTD",
+  "address": "157 Moo 5, Mahasawat, Bangkruai, Nonthaburi, Thailand 11130"
+}

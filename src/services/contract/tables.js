@@ -209,7 +209,7 @@ const bankAccoutTable = (bankInformation, indentLeftDXA = 1 * DXA.INCH) => {
 
 const requireDocumentTable = (requireDocument, indentLeftDXA = 1 * DXA.INCH) => {
   const tableWidth = USABLE_WIDTH - indentLeftDXA;
-  const cols = scaleColumnsTo(COLS.LABEL_SEP_VALUE_3, tableWidth);
+  const cols = scaleColumnsTo(COLS.LABEL_SEP_VALUE_5, tableWidth);
   return [
     new Paragraph({
       numbering: { reference: 'article-numbering', level: 1 },

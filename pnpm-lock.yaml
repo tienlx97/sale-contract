@@ -53,6 +53,9 @@ importers:
       jsonwebtoken:
         specifier: ^8.5.1
         version: 8.5.1
+      libreoffice-convert:
+        specifier: ^1.7.0
+        version: 1.7.0
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -2490,6 +2493,10 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
+  libreoffice-convert@1.7.0:
+    resolution: {integrity: sha512-sPG+ikVfJGNf6zEZxvmfNSAQQ+wM78Zdg2C1ikAiqL3NlmPTs3004TypsxICJ6IGkrqXr9wlxBs6wB905vYLOw==}
+    engines: {node: '>=6'}
+
   lie@3.3.0:
     resolution: {integrity: sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==}
 
@@ -3719,6 +3726,10 @@ packages:
 
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
+
+  tmp@0.2.5:
+    resolution: {integrity: sha512-voyz6MApa1rQGUxT3E+BK7/ROe8itEx7vD8/HEvt4xwXucvQ5G5oeEiHkmHZJuBO21RpOf+YYm9MOivj709jow==}
+    engines: {node: '>=14.14'}
 
   tmpl@1.0.5:
     resolution: {integrity: sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==}
@@ -7094,6 +7105,11 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
+  libreoffice-convert@1.7.0:
+    dependencies:
+      async: 3.2.6
+      tmp: 0.2.5
+
   lie@3.3.0:
     dependencies:
       immediate: 3.0.6
@@ -8496,6 +8512,8 @@ snapshots:
   throat@5.0.0: {}
 
   through@2.3.8: {}
+
+  tmp@0.2.5: {}
 
   tmpl@1.0.5: {}
 
