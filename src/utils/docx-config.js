@@ -9,7 +9,13 @@ const DXA = {
 const PAGE = {
   A4_WIDTH: 11907, // twips
   // 1.25/1/1.25/1 cm
-  MARGIN: { TOP: 708, RIGHT: 567, BOTTOM: 708, LEFT: 567 },
+  MARGIN: {
+    // TOP: 708, RIGHT: 567, BOTTOM: 708, LEFT: 567
+    TOP: 567,
+    RIGHT: 567,
+    BOTTOM: 567,
+    LEFT: 708,
+  },
 
   STANDARD_MARGIN: { TOP: 567, RIGHT: 567, BOTTOM: 567, LEFT: 708 },
 };
@@ -24,6 +30,7 @@ const FONT = {
   SIZE_14: 28,
   SIZE_15: 30,
   SIZE_16: 32,
+  SIZE_17: 34,
   SIZE_18: 34,
 
   COLOR_BLACK: '000000',
@@ -77,6 +84,8 @@ const scaleColumnsTo = (base, targetWidth) => {
   const k = targetWidth / sum;
   return base.map((w) => Math.floor(w * k));
 };
+
+//
 
 module.exports = {
   DXA,

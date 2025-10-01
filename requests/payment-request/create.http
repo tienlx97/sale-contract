@@ -3,10 +3,39 @@ Content-Type: application/json
 
 {
   "signDate": "2025-09-29",
+  "contractSignedDate": "2025-07-07",
   "payment": {
-    "num": 1
+    "num": 1,
+    "value": 28200
   },
   "no": "25KCT28.PR.01",
+  "contractNo": "25KCT28",
   "company": "BANGSUE ENGINEERING CO., LTD",
-  "address": "157 Moo 5, Mahasawat, Bangkruai, Nonthaburi, Thailand 11130"
+  "address": "157 Moo 5, Mahasawat, Bangkruai, Nonthaburi, Thailand 11130",
+  "bank": {
+    "beneficiary": {
+      "key": "Beneficiary",
+      "value": "DAI NGHIA INDUSTRIAL MECHANICS CO., LTD"
+    },
+    "accountNo": {
+      "key": "Bank account No.",
+      "value": "1032407684"
+    },
+    "bankName": {
+      "key": "Bank",
+      "value": "Joint Stock Commercial Bank for Foreign Trade of Viet Nam"
+    },
+    "branch": {
+      "key": "Branch",
+      "value": "Tan Binh"
+    },
+    "address": {
+      "key": "Address",
+      "value": "108 Tay Thanh Street, Tay Thanh Ward, Ho Chi Minh City, Vietnam"
+    },
+    "swift": {
+      "key": "SWIFT Code",
+      "value": "BFTVVNVX044"
+    }
+  }
 }

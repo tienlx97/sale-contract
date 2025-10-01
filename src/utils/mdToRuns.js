@@ -59,6 +59,7 @@ function mdToRuns(str, markup) {
               strike: strike || undefined,
               underline: underline ? {} : undefined,
               allCaps: markup?.caplock,
+              size: markup?.size,
             })
           );
           break;

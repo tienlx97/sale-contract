@@ -6,12 +6,23 @@ const DEFAULT_CONTRACT_VALUE = {
   },
   article: {
     articleObjectOfcontract: {
-      title_: 'THE OBJECT OF THE CONTRACT',
+      title_: 'OBJECT OF THE CONTRACT',
       b1: 'Party A agrees to engage Party B for the supply and execution of steel structure works as described below:',
       block: [
+        // {
+        //   type: 'paragraph',
+        //   text: 'Definition of the Works',
+        //   level: 1,
+        //   items: {
+        //     intent: 1,
+        //     val: [
+        //       'For the purpose of this Contract, the term **“Steel-Structure Works”** (hereinafter referred to as **the Project**) shall include, but shall not be limited to, the following activities to be performed by Party B:',
+        //     ],
+        //   },
+        // },
         {
           type: 'paragraph',
-          text: 'Party A engages Party B to supply and execute the steel-structure works (hereinafter called “the **Project**”) as described in the Contract Information Sheet (Project, Item, Location) and detailed in Schedule 1 – Scope & Materials',
+          text: 'Party A engages Party B to supply and execute the steel-structure works (hereinafter called “the **Project**”) as described in the Contract Information Sheet (Project, Item, Location).',
           level: 1,
         },
         {
@@ -42,7 +53,7 @@ const DEFAULT_CONTRACT_VALUE = {
       ],
     },
     articleDocumentAttachToTheContract: {
-      title_: 'DOCUMENTS ATTACHED TO THE CONTRACT',
+      title_: 'CONTRACT DOCUMENTS',
       block: [
         {
           type: 'paragraph',
@@ -259,27 +270,22 @@ const DEFAULT_CONTRACT_VALUE = {
         {
           type: 'paragraph',
           intent: 1,
-          text: 'Neither party shall be liable to fulfill any obligation under this Contract if such obligation becomes impossible or unreasonably difficult to perform due to force majeure, including but not limited to war, severe fire, flood, typhoon, earthquake, riots, civil disturbances, embargo, government regulations or orders, vessel congestion, or any circumstances beyond the control of the parties.',
+          text: 'Neither Party shall be liable for any failure or delay in performing its obligations under this Contract if such failure or delay is caused by **force majeure**, including but not limited to war, severe fire, flood, typhoon, earthquake, riots, civil disturbances, embargo, government regulations or orders, vessel congestion, or any other circumstances beyond the reasonable control of the Parties.',
         },
         {
           type: 'paragraph',
           intent: 1,
-          text: 'In case the goods are subject to customs inspection, all related costs shall be borne by the Consignee (Party A).',
+          text: 'The Party affected by a force majeure event shall **promptly notify** the other Party in writing upon its occurrence and, within fourteen (14) days thereafter, shall provide a **certificate of the event issued by the competent government authorities** at the place of occurrence as evidence',
         },
         {
           type: 'paragraph',
           intent: 1,
-          text: 'Either party being affected by such an event of force majeure shall give written notice to the other party immediately of the occurrence mentioned above and within fourteen days thereafter, the Seller shall send by airmail to the Buyer for their acceptance of a certificate of the event issued by the Competent Government Authorities where the event occurs as evidence thereof.',
+          text: 'If such force majeure event continues for more than **ten (10) weeks**, either Party shall have the right to **terminate this Contract by giving fifteen (15) days’ prior written notice** to the other Party.',
         },
         {
           type: 'paragraph',
           intent: 1,
-          text: 'Should such event of force majeure continue for more than 10 weeks, either party hereto shall have the right to cancel this contract by giving 15 days prior notice.',
-        },
-        {
-          type: 'paragraph',
-          intent: 1,
-          text: 'In case of customs inspection required by authorities at the port of departure, and such inspection is not due to Party B’s fault, all related costs incurred shall be borne by the Consignee (Party A)',
+          text: '__Customs Inspection__: Should the Goods be subject to customs inspection at the port of departure or destination **for reasons not attributable to Party B**, all related costs and expenses shall be **borne by Party A (the Consignee)**',
         },
       ],
     },
@@ -289,12 +295,12 @@ const DEFAULT_CONTRACT_VALUE = {
         {
           type: 'paragraph',
           level: 1,
-          text: 'This Contract shall be governed by the prevailing laws of the Socialist Republic of Vietnam.',
+          text: 'This Contract shall be governed by the prevailing laws of the **Socialist Republic of Vietnam**.',
         },
         {
           type: 'paragraph',
           level: 1,
-          text: 'All disputes between the parties that are not amicably settled within a reasonable time will be settled by Arbitration by the Vietnam International Arbitration center in Ho Chi Minh City, under the Vietnamese law, whose decision will be final and binding on both parties. Arbitration’s fee and other relative cost will be on account of losing party.',
+          text: 'All disputes arising out of or in connection with this Contract which cannot be amicably settled within a reasonable period shall be finally settled by arbitration at the **Vietnam International Arbitration Centre (VIAC) at the Vietnam Chamber of Commerce and Industry (VCCI), Ho Chi Minh City**, in accordance with the **Arbitration Rules of VIAC** and under the laws of the Socialist Republic of Vietnam. The arbitral award shall be final and binding upon both Parties. The arbitration fee and all related costs shall be borne by the **losing Party**.',
         },
         {
           type: 'paragraph',
@@ -313,6 +319,17 @@ const DEFAULT_CONTRACT_VALUE = {
         },
       ],
     },
+
+    languageArticle: {
+      title: 'LANGUAGE OF THE CONTRACT',
+      block: [
+        {
+          type: 'paragraph',
+          intent: 1,
+          text: 'This Contract is executed in the English language only. All communications and documents relating to the performance of this Contract shall also be in English.',
+        },
+      ],
+    },
   },
 
   format: {
@@ -323,7 +340,8 @@ const DEFAULT_CONTRACT_VALUE = {
       FOB: 'The Contract Value is a lump sum, covering all costs related to **fabrication, packing, inland transportation to the port of loading, export customs clearance, loading onto the vessel, and warranty**. All costs beyond loading on board the vessel, including **ocean freight, marine insurance, import duties, and taxes at the country of destination **, shall be borne solely by Party A (the Buyer). The Contract Price shall not be subject to remeasurement of quantities.',
     },
 
-    contractValueText: 'The Contract Value is: **{{commercial.contractValue.currencyCode}} {{formatContractValue}}**',
+    contractValueText:
+      'The Contract Value is fixed at **{{commercial.contractValue.currencyCode}} {{formatContractValue}}**',
     contractValueInWord: '*(In words: {{contractValueInWords}})*.',
     contractDeliveryTermText:
       'Delivery term: **{{commercial.incoterm.rule}} {{commercial.incoterm.location}}, Incoterms® {{commercial.incoterm.year}}**.',

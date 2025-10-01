@@ -41,7 +41,7 @@ const rowLabelSepValue = (label, value, markup, data) =>
 const rowLabelSepValue2 = (
   label,
   value,
-  { boldKey = false, boldValue = false, caplockKey = false, caplockValue = false } = {},
+  { boldKey = false, boldValue = false, caplockKey = false, caplockValue = false, size } = {},
   {
     heightRule = HeightRule.AUTO, // AUTO | ATLEAST | EXACT
     heightValue = 0, // twips; 0 = auto
@@ -56,7 +56,7 @@ const rowLabelSepValue2 = (
         children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
-            children: hbsMdToRuns(label, undefined, { caplock: caplockKey, bold: boldKey }),
+            children: hbsMdToRuns(label, undefined, { caplock: caplockKey, bold: boldKey, size }),
           }),
         ],
       }),
@@ -66,7 +66,7 @@ const rowLabelSepValue2 = (
         children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
-            children: hbsMdToRuns(value, undefined, { caplock: caplockValue, bold: boldValue }),
+            children: hbsMdToRuns(value, undefined, { caplock: caplockValue, bold: boldValue, size }),
           }),
         ],
       }),
@@ -82,7 +82,13 @@ const tableLabelSepValue = (rows) =>
   });
 
 // Project detail (centered 70% width)
-const projectDetailTable = (contractInformationTable) => {
+const projectDetailTable = (
+  contractInformationTable,
+  markup = {
+    caplockValue: true,
+    boldValue: true,
+  }
+) => {
   return [
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -101,21 +107,9 @@ const projectDetailTable = (contractInformationTable) => {
       columnWidths: COLS.LABEL_SEP_VALUE_2,
       alignment: AlignmentType.CENTER,
       rows: [
-        rowLabelSepValue(
-          contractInformationTable.project.key,
-          contractInformationTable.project.value,
-          contractInformationTable.project.markup
-        ),
-        rowLabelSepValue(
-          contractInformationTable.item.key,
-          contractInformationTable.item.value,
-          contractInformationTable.item.markup
-        ),
-        rowLabelSepValue(
-          contractInformationTable.location.key,
-          contractInformationTable.location.value,
-          contractInformationTable.location.markup
-        ),
+        rowLabelSepValue(contractInformationTable.project.key, contractInformationTable.project.value, markup),
+        rowLabelSepValue(contractInformationTable.item.key, contractInformationTable.item.value, markup),
+        rowLabelSepValue(contractInformationTable.location.key, contractInformationTable.location.value, markup),
       ],
     }),
   ];
@@ -181,7 +175,7 @@ const projectWorkDetailTable = ({ projectWorkDetails, quotationDate }, indentLef
   ];
 };
 
-const bankAccoutTable = (bankInformation, indentLeftDXA = 1 * DXA.INCH) => {
+const bankAccoutTable = (bankInformation, indentLeftDXA = 1 * DXA.INCH, markup = { boldValue: true }) => {
   const tableWidth = USABLE_WIDTH - indentLeftDXA;
   const cols = scaleColumnsTo(COLS.LABEL_SEP_VALUE_4, tableWidth);
   return [
@@ -192,16 +186,12 @@ const bankAccoutTable = (bankInformation, indentLeftDXA = 1 * DXA.INCH) => {
       columnWidths: cols,
       indent: { size: indentLeftDXA, type: WidthType.DXA },
       rows: [
-        rowLabelSepValue(
-          bankInformation.beneficiary.key,
-          bankInformation.beneficiary.value,
-          bankInformation.beneficiary.markup
-        ),
-        rowLabelSepValue(bankInformation.accountNo.key, bankInformation.accountNo.value, bankInformation.accountNo.markup),
-        rowLabelSepValue(bankInformation.bankName.key, bankInformation.bankName.value, bankInformation.bankName.markup),
-        rowLabelSepValue(bankInformation.branch.key, bankInformation.branch.value, bankInformation.branch.markup),
-        rowLabelSepValue(bankInformation.address.key, bankInformation.address.value, bankInformation.beneficiary.markup),
-        rowLabelSepValue(bankInformation.swift.key, bankInformation.swift.value, bankInformation.swift.markup),
+        rowLabelSepValue(bankInformation.beneficiary.key, bankInformation.beneficiary.value, markup),
+        rowLabelSepValue(bankInformation.accountNo.key, bankInformation.accountNo.value, markup),
+        rowLabelSepValue(bankInformation.bankName.key, bankInformation.bankName.value, markup),
+        rowLabelSepValue(bankInformation.branch.key, bankInformation.branch.value, markup),
+        rowLabelSepValue(bankInformation.address.key, bankInformation.address.value, markup),
+        rowLabelSepValue(bankInformation.swift.key, bankInformation.swift.value, markup),
       ],
     }),
   ];
@@ -233,7 +223,7 @@ const requireDocumentTable = (requireDocument, indentLeftDXA = 1 * DXA.INCH) => 
 
 const signinTable = ({ partyA, partyB }) => {
   const tableWidth = USABLE_WIDTH;
-  const cols = scaleColumnsTo([4000, 6000], tableWidth);
+  const cols = scaleColumnsTo([4000, 4000], tableWidth);
   return [
     new Table({
       ...TABLE_DEFAULTS,
@@ -242,24 +232,38 @@ const signinTable = ({ partyA, partyB }) => {
       columnWidths: cols,
       rows: [
         rowLabelSepValue2(
-          partyA.company,
-          partyB.company,
+          'For and on behalf of Party A',
+          'For and on behalf of Party B',
           {
             boldValue: true,
             boldKey: true,
           },
           {
+            size: FONT.SIZE_12,
+          }
+        ),
+        rowLabelSepValue2(
+          partyA.company,
+          partyB.company,
+          {
+            boldValue: true,
+            boldKey: true,
+            size: FONT.SIZE_12,
+          },
+          {
             heightRule: HeightRule.ATLEAST, // or HeightRule.EXACT to force
-            heightValue: 720 * 3,
+            heightValue: 720 * 4,
           }
         ),
         rowLabelSepValue2(partyA.representedBy, partyB.representedBy, {
           boldValue: true,
           boldKey: true,
+          size: FONT.SIZE_12,
         }),
         rowLabelSepValue2(partyA.position, partyB.position, {
           boldValue: true,
           boldKey: true,
+          size: FONT.SIZE_12,
         }),
       ],
     }),
@@ -273,15 +277,15 @@ const createPartyATable = (partyA) => [
     layout: TableLayoutType.FIXED,
     columnWidths: COLS.LABEL_SEP_VALUE,
     rows: [
-      rowLabelSepValue(partyA.company.key, partyA.company.value, partyA.company.markup),
-      rowLabelSepValue(partyA.representedBy.key, partyA.representedBy.value, partyA.representedBy.markup),
+      rowLabelSepValue(partyA.company.key, partyA.company.value, { caplockValue: true, boldValue: true, boldKey: true }),
+      rowLabelSepValue(partyA.representedBy.key, partyA.representedBy.value, { boldValue: true, boldKey: true }),
       rowLabelSepValue(partyA.position.key, partyA.position.value, partyA.position.markup),
       rowLabelSepValue(partyA.address.key, partyA.address.value, partyA.address.markup),
       ...(partyA.optional && partyA.optional.map((item) => rowLabelSepValue(item.key, item.value, item.markup))),
     ],
   }),
   new Paragraph({
-    children: hbsMdToRuns(partyA.title),
+    children: hbsMdToRuns('(Hereinafter referred to as **Party A**)'),
   }),
   new Paragraph({
     children: [new TextRun('___')],
@@ -294,8 +298,12 @@ const createPartyBTable = (partyB) => [
     layout: TableLayoutType.FIXED,
     columnWidths: COLS.LABEL_SEP_VALUE,
     rows: [
-      rowLabelSepValue(partyB.company.key, partyB.company.value, partyB.company.markup),
-      rowLabelSepValue(partyB.representedBy.key, partyB.representedBy.value, partyB.representedBy.markup),
+      rowLabelSepValue(partyB.company.key, partyB.company.value, { caplockValue: true, boldValue: true, boldKey: true }),
+      rowLabelSepValue(partyB.representedBy.key, partyB.representedBy.value, {
+        caplockValue: true,
+        boldValue: true,
+        boldKey: true,
+      }),
       rowLabelSepValue(partyB.position.key, partyB.position.value, partyB.position.markup),
       rowLabelSepValue(partyB.address.key, partyB.address.value, partyB.address.markup),
       rowLabelSepValue(partyB.taxCode.key, partyB.taxCode.value, partyB.taxCode.markup),
@@ -303,7 +311,7 @@ const createPartyBTable = (partyB) => [
     ],
   }),
   new Paragraph({
-    children: hbsMdToRuns(partyB.title),
+    children: hbsMdToRuns('(Hereinafter referred to as **Party B**)'),
   }),
   new Paragraph({
     children: [new TextRun('___')],

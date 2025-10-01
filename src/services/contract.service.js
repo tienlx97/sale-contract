@@ -1,9 +1,9 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-restricted-syntax */
-const { Document, Packer, Paragraph, TextRun, AlignmentType } = require('docx');
+const { Packer, Paragraph, TextRun, AlignmentType } = require('docx');
 const fs = require('fs');
 const libre = require('libreoffice-convert');
-const { FONT, PARAGRAPH_SPACING, PAGE, INDENT } = require('./contract/docx-config');
+const { FONT, INDENT } = require('./contract/docx-config');
 const { numberingConfig } = require('./contract/numbering');
 const { createHeaderImageParagraph } = require('./contract/header');
 const {
@@ -14,7 +14,6 @@ const {
   createPartyBTable,
   requireDocumentTable,
 } = require('./contract/tables');
-const { createFooter } = require('./contract/footer');
 const { hbsMdToRuns } = require('../utils/hbsMdToRuns');
 const { DEFAULT_CONTRACT_VALUE } = require('../constant/contract');
 const {
@@ -25,6 +24,7 @@ const {
   amountInWordsCurrencyFirst,
   numberToWords,
 } = require('../utils/toWordData');
+const { createDocument } = require('../utils/createDocument');
 
 /**
  * Convert intent number to left indent in DXA.
@@ -317,266 +317,235 @@ const buildDoc = async (contractBody) => {
     t2: isoToDDMMYYYY(signDate),
   };
 
-  const doc = new Document({
-    styles: {
-      default: {
-        document: {
-          run: {
-            font: FONT.FAMILY,
-            size: FONT.SIZE_13,
-          },
-          paragraph: {
-            spacing: PARAGRAPH_SPACING,
-          },
-        },
-      },
-    },
-
+  const doc = createDocument({
     numbering: numberingConfig,
 
-    sections: [
-      {
-        properties: {
-          page: {
-            margin: {
-              top: PAGE.MARGIN.TOP,
-              right: PAGE.MARGIN.RIGHT,
-              bottom: PAGE.MARGIN.BOTTOM,
-              left: PAGE.MARGIN.LEFT,
-            },
-          },
-        },
-        footers: {
-          default: createFooter(),
-        },
+    children: [
+      new Paragraph({
+        alignment: AlignmentType.RIGHT,
+        children: [new TextRun({ text: `Ho Chi Minh, ${signedDateInWords.t1}` })],
+      }),
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
         children: [
-          createHeaderImageParagraph(headerImagePath),
-          new Paragraph({
-            alignment: AlignmentType.RIGHT,
-            children: [new TextRun({ text: `Ho Chi Minh, ${signedDateInWords.t1}` })],
-          }),
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [
-              new TextRun({
-                text: DEFAULT_CONTRACT_VALUE.dump.contractTitle,
-                allCaps: true,
-                bold: true,
-                size: FONT.SIZE_18,
-              }),
-            ],
-          }),
-          ...projectDetailTable(info),
-          new Paragraph({
-            children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.dump[1], {
-              signDate: signedDateInWords.t2,
-              partyBCompany: parties.B.company.value,
-            }),
-          }),
-          ...createPartyATable(parties.A),
-          ...createPartyBTable(parties.B),
-          new Paragraph({
-            children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.dump[2]),
-          }),
-
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 0 },
-            children: [
-              new TextRun({
-                text: DEFAULT_CONTRACT_VALUE.article.articleObjectOfcontract.title_,
-                allCaps: true,
-                bold: true,
-                color: FONT.COLOR_BLACK,
-                size: FONT.SIZE_15,
-              }),
-            ],
-          }),
-          // new Paragraph({
-          //   numbering: { reference: 'article-numbering', level: 1 },
-          //   children: [
-          //     new TextRun({
-          //       text: DEFAULT_CONTRACT_VALUE.article.articleObjectOfcontract.b1,
-          //       bold: true,
-          //     }),
-          //   ],
-          // }),
-          // ...projectWorkDetailTable({ projectWorkDetails, quotationDate: quotationDate.text2 }, INDENT.L1_LEFT),
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleObjectOfcontract, {
-            quotationDate: quotationDateInWords.t1,
-          }),
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 0 },
-            children: [
-              new TextRun({
-                text: DEFAULT_CONTRACT_VALUE.article.articleDocumentAttachToTheContract.title_,
-                bold: true,
-                size: FONT.SIZE_15,
-              }),
-            ],
-          }),
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleDocumentAttachToTheContract, {
-            quotationDate: quotationDateInWords.t2,
-          }),
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleContractPeriod, {
-            periods,
-            transportationLocation,
-          }),
-          ...createPaymentArticle({ appendPayments, commercial, payments }, { formatContractValue }),
-
-          // //
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 1 },
-            children: [
-              new TextRun({
-                text: 'Bank Information',
-                bold: true,
-              }),
-            ],
-          }),
-          ...bankAccoutTable(commercial.bank),
-
-          ...requireDocumentTable(commercial.documents),
-
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 1 },
-            children: [
-              new TextRun({
-                text: 'Packing',
-                bold: true,
-              }),
-            ],
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.packing),
-          }),
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 1 },
-            children: [
-              new TextRun({
-                text: 'Consignee',
-                bold: true,
-              }),
-            ],
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: hbsMdToRuns(commercial.consignee.company),
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: hbsMdToRuns(commercial.consignee.address),
-          }),
-          // //
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 1 },
-            children: [
-              new TextRun({
-                text: 'Notify Party',
-                bold: true,
-              }),
-            ],
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: hbsMdToRuns(commercial.notifyParty.company),
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: hbsMdToRuns(commercial.notifyParty.address),
-          }),
-          // //
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 1 },
-            children: [
-              new TextRun({
-                text: 'Port of shipment',
-                bold: true,
-              }),
-            ],
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: hbsMdToRuns(commercial.pol),
-          }),
-          // //
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 1 },
-            children: [
-              new TextRun({
-                text: 'Port of destination',
-                bold: true,
-              }),
-            ],
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: hbsMdToRuns(commercial.pod),
-          }),
-          //
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 1 },
-            children: [
-              new TextRun({
-                text: 'Shipment terms',
-                bold: true,
-              }),
-            ],
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: hbsMdToRuns(commercial.shipmentTerms),
-          }),
-          // //
-          new Paragraph({
-            numbering: { reference: 'article-numbering', level: 1 },
-            children: [
-              new TextRun({
-                text: 'Partial Shipments and Transshipment',
-                bold: true,
-              }),
-            ],
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: [
-              new TextRun({
-                text: 'Partial shipments: Allowed',
-              }),
-            ],
-          }),
-          new Paragraph({
-            indent: { left: INDENT.L1_LEFT },
-            children: [
-              new TextRun({
-                text: 'Transshipment: Allowed',
-              }),
-            ],
-          }),
-
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleauthorityAndResponsibilitiesOfPartyA),
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleauthorityAndResponsibilitiesOfPartyB),
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleWarranty),
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleTermination),
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleLiquidation),
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.forceMajeure),
-          ...renderArticle(DEFAULT_CONTRACT_VALUE.article.commonArticle),
-          new Paragraph({}),
-          //
-          ...signinTable({
-            partyA: {
-              company: parties.A.company.value,
-              representedBy: parties.A.representedBy.value,
-              position: parties.A.position.value,
-            },
-            partyB: {
-              company: parties.B.company.value,
-              representedBy: parties.B.representedBy.value,
-              position: parties.B.position.value,
-            },
+          new TextRun({
+            text: DEFAULT_CONTRACT_VALUE.dump.contractTitle,
+            allCaps: true,
+            bold: true,
+            size: FONT.SIZE_18,
           }),
         ],
-      },
+      }),
+      ...projectDetailTable(info),
+      new Paragraph({
+        children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.dump[1], {
+          signDate: signedDateInWords.t2,
+          partyBCompany: parties.B.company.value,
+        }),
+      }),
+      ...createPartyATable(parties.A),
+      ...createPartyBTable(parties.B),
+      new Paragraph({
+        children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.dump[2]),
+      }),
+
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 0 },
+        children: [
+          new TextRun({
+            text: DEFAULT_CONTRACT_VALUE.article.articleObjectOfcontract.title_,
+            allCaps: true,
+            bold: true,
+            color: FONT.COLOR_BLACK,
+            size: FONT.SIZE_15,
+          }),
+        ],
+      }),
+      // new Paragraph({
+      //   numbering: { reference: 'article-numbering', level: 1 },
+      //   children: [
+      //     new TextRun({
+      //       text: DEFAULT_CONTRACT_VALUE.article.articleObjectOfcontract.b1,
+      //       bold: true,
+      //     }),
+      //   ],
+      // }),
+      // ...projectWorkDetailTable({ projectWorkDetails, quotationDate: quotationDate.text2 }, INDENT.L1_LEFT),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleObjectOfcontract, {
+        quotationDate: quotationDateInWords.t1,
+      }),
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 0 },
+        children: [
+          new TextRun({
+            text: DEFAULT_CONTRACT_VALUE.article.articleDocumentAttachToTheContract.title_,
+            bold: true,
+            size: FONT.SIZE_15,
+          }),
+        ],
+      }),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleDocumentAttachToTheContract, {
+        quotationDate: quotationDateInWords.t2,
+      }),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleContractPeriod, {
+        periods,
+        transportationLocation,
+      }),
+      ...createPaymentArticle({ appendPayments, commercial, payments }, { formatContractValue }),
+
+      // //
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 1 },
+        children: [
+          new TextRun({
+            text: 'Bank Information',
+            bold: true,
+          }),
+        ],
+      }),
+      ...bankAccoutTable(commercial.bank),
+
+      ...requireDocumentTable(commercial.documents),
+
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 1 },
+        children: [
+          new TextRun({
+            text: 'Packing',
+            bold: true,
+          }),
+        ],
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.packing),
+      }),
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 1 },
+        children: [
+          new TextRun({
+            text: 'Consignee',
+            bold: true,
+          }),
+        ],
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: hbsMdToRuns(commercial.consignee.company),
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: hbsMdToRuns(commercial.consignee.address),
+      }),
+      // //
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 1 },
+        children: [
+          new TextRun({
+            text: 'Notify Party',
+            bold: true,
+          }),
+        ],
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: hbsMdToRuns(commercial.notifyParty.company),
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: hbsMdToRuns(commercial.notifyParty.address),
+      }),
+      // //
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 1 },
+        children: [
+          new TextRun({
+            text: 'Port of shipment',
+            bold: true,
+          }),
+        ],
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: hbsMdToRuns(commercial.pol),
+      }),
+      // //
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 1 },
+        children: [
+          new TextRun({
+            text: 'Port of destination',
+            bold: true,
+          }),
+        ],
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: hbsMdToRuns(commercial.pod),
+      }),
+      //
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 1 },
+        children: [
+          new TextRun({
+            text: 'Shipment terms',
+            bold: true,
+          }),
+        ],
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: hbsMdToRuns(commercial.shipmentTerms),
+      }),
+      // //
+      new Paragraph({
+        numbering: { reference: 'article-numbering', level: 1 },
+        children: [
+          new TextRun({
+            text: 'Partial Shipments and Transshipment',
+            bold: true,
+          }),
+        ],
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: [
+          new TextRun({
+            text: 'Partial shipments: Allowed',
+          }),
+        ],
+      }),
+      new Paragraph({
+        indent: { left: INDENT.L1_LEFT },
+        children: [
+          new TextRun({
+            text: 'Transshipment: Allowed',
+          }),
+        ],
+      }),
+
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleauthorityAndResponsibilitiesOfPartyA),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleauthorityAndResponsibilitiesOfPartyB),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleWarranty),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleTermination),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleLiquidation),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.forceMajeure),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.languageArticle),
+      ...renderArticle(DEFAULT_CONTRACT_VALUE.article.commonArticle),
+      new Paragraph({}),
+      //
+      ...signinTable({
+        partyA: {
+          company: parties.A.company.value,
+          representedBy: parties.A.representedBy.value,
+          position: parties.A.position.value,
+        },
+        partyB: {
+          company: parties.B.company.value,
+          representedBy: parties.B.representedBy.value,
+          position: parties.B.position.value,
+        },
+      }),
     ],
   });
 
