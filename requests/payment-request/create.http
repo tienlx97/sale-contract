@@ -8,8 +8,9 @@ Content-Type: application/json
     "num": 1,
     "value": 28200
   },
-  "no": "25KCT28.PR.01",
+  "no": "25KCT28/PR-01",
   "contractNo": "25KCT28",
+  "proformaInvoiceNo": "25KCT28/PI-01",
   "company": "BANGSUE ENGINEERING CO., LTD",
   "address": "157 Moo 5, Mahasawat, Bangkruai, Nonthaburi, Thailand 11130",
   "bank": {

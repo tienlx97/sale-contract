@@ -5,7 +5,6 @@ const fs = require('fs');
 const libre = require('libreoffice-convert');
 const { FONT, INDENT } = require('./contract/docx-config');
 const { numberingConfig } = require('./contract/numbering');
-const { createHeaderImageParagraph } = require('./contract/header');
 const {
   projectDetailTable,
   bankAccoutTable,
@@ -318,8 +317,9 @@ const buildDoc = async (contractBody) => {
   };
 
   const doc = createDocument({
-    numbering: numberingConfig,
-
+    options: {
+      numbering: numberingConfig,
+    },
     children: [
       new Paragraph({
         alignment: AlignmentType.RIGHT,

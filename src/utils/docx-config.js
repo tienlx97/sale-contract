@@ -46,6 +46,12 @@ const INDENT = {
   L2_GAP: 0.5 * DXA.INCH,
   BULLET_LEFT: 1 * DXA.INCH + 0.5 * DXA.INCH + 0.25 * DXA.INCH,
   BULLET_GAP: 0.25 * DXA.INCH,
+
+  //
+
+  VAL: {
+    0.5: 0.5 * DXA.INCH,
+  },
 };
 
 // === Borders & table defaults ===

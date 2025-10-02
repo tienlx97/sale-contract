@@ -9,7 +9,7 @@ function safeFileName(base = 'payment-request', ext = 'pdf') {
 
 const createPaymentRequest = catchAsync(async (req, res) => {
   try {
-    const { format = 'docx', fileName } = req.query; // ?format=docx|pdf
+    const { format = 'docx', fileName = 'payment-request' } = req.query; // ?format=docx|pdf
     const payload = req.body; // your contract DTO
 
     const buf = await paymentRequestService.createPaymentRequestBuffer(payload, { format });
@@ -20,6 +20,7 @@ const createPaymentRequest = catchAsync(async (req, res) => {
       ext === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     );
     const name = fileName || safeFileName('payment-request', ext);
+
     res.setHeader('Content-Disposition', `attachment; filename="${name}"; filename*=UTF-8''${encodeURIComponent(name)}`);
     res.setHeader('Cache-Control', 'no-store');
     // res.send(buf);

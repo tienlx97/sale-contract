@@ -3,14 +3,18 @@ const { FONT, PARAGRAPH_SPACING, PAGE } = require('./docx-config');
 const { createFooter } = require('./footer');
 const { createHeader } = require('./docx.util');
 
-const createDocument = ({ children, numbering }) => {
+const createDocument = ({ children, options = {} }) => {
+  const { font = FONT.FAMILY, size = FONT.SIZE_13, numbering } = options;
+
+  console.log({ font, size });
+
   return new Document({
     styles: {
       default: {
         document: {
           run: {
-            font: FONT.FAMILY,
-            size: FONT.SIZE_13,
+            font,
+            size,
           },
           paragraph: {
             spacing: PARAGRAPH_SPACING,

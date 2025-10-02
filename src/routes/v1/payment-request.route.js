@@ -3,6 +3,6 @@ const paymentRequestController = require('../../controllers/paymentRequest.contr
 
 const router = express.Router();
 
-router.route('/').post(paymentRequestController.createPaymentRequestTest);
+router.route('/').post(paymentRequestController.createPaymentRequest);
 
 module.exports = router;
