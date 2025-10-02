@@ -1,6 +1,15 @@
 // tables.js (excerpt)
 const { Table, TableRow, TableCell, Paragraph, TextRun, AlignmentType, TableLayoutType, WidthType } = require('docx');
-const { USABLE_WIDTH, COLS, scaleColumnsTo, TABLE_DEFAULTS, BORDER_NONE, FONT, DXA } = require('../../utils/docx-config');
+const {
+  USABLE_WIDTH,
+  COLS,
+  scaleColumnsTo,
+  TABLE_DEFAULTS,
+  BORDER_NONE,
+  FONT,
+  DXA,
+  PAGE,
+} = require('../../utils/docx-config');
 const { hbsMdToRuns } = require('../../utils/hbsMdToRuns');
 
 /**
@@ -104,4 +113,43 @@ function bankAccoutTable(bankInformation, indentLeftDXA = 1 * DXA.INCH, markup =
   ];
 }
 
-module.exports = { bankAccoutTable, rowLabelSepValue };
+function bankAccoutTableV2(bankInformation, indentLeftDXA = 1 * DXA.INCH, markup = { boldValue: true }, visibleFields) {
+  const USABLE_WIDTH_V2 = PAGE.A4_WIDTH - PAGE.MARGIN_V2.LEFT - PAGE.MARGIN_V2.RIGHT;
+
+  const tableWidth = Math.max(0, (USABLE_WIDTH_V2 ?? 0) - (indentLeftDXA ?? 0));
+  const cols = scaleColumnsTo(COLS.LABEL_SEP_VALUE_4, tableWidth);
+
+  // Default order if not provided
+  const order =
+    visibleFields && Array.isArray(visibleFields) && visibleFields.length > 0
+      ? visibleFields
+      : ['beneficiary', 'accountNo', 'bankName', 'branch', 'address', 'swift'];
+
+  // Build rows only for fields that exist & have both key/value
+  const rows = [];
+  // eslint-disable-next-line no-restricted-syntax
+  for (const field of order) {
+    const item = bankInformation?.[field];
+    const label = item?.key?.toString?.() ?? item?.key;
+    const value = item?.value?.toString?.() ?? item?.value;
+    if (label && value) {
+      rows.push(rowLabelSepValue(label, value, markup));
+    }
+  }
+
+  // If nothing to show, return an empty array so spreading does nothing
+  if (rows.length === 0) return [];
+
+  return [
+    new Table({
+      ...TABLE_DEFAULTS,
+      layout: TableLayoutType.FIXED,
+      width: { size: tableWidth, type: WidthType.DXA },
+      columnWidths: cols,
+      indent: { size: indentLeftDXA, type: WidthType.DXA },
+      rows,
+    }),
+  ];
+}
+
+module.exports = { bankAccoutTable, rowLabelSepValue, bankAccoutTableV2 };

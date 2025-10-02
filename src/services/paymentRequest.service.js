@@ -1,7 +1,5 @@
 // payment-request.js
 /* eslint-disable no-console */
-const fs = require('fs');
-const path = require('path');
 const {
   Packer,
   Paragraph,
@@ -18,10 +16,10 @@ const {
 } = require('docx');
 
 const { formatDayMonthYear, toOrdinal, amountInWordsCurrencyFirst } = require('../utils/toWordData');
-const { createDocument } = require('../utils/createDocument');
-const { FONT, TABLE_DEFAULTS, BORDER_NONE, USABLE_WIDTH, scaleColumnsTo, INDENT } = require('../utils/docx-config');
+const { createDocumentV2 } = require('../utils/createDocument');
+const { FONT, TABLE_DEFAULTS, BORDER_NONE, scaleColumnsTo, INDENT, PAGE } = require('../utils/docx-config');
 const { hbsMdToRuns } = require('../utils/hbsMdToRuns');
-const { bankAccoutTable } = require('./common/bank-account');
+const { bankAccoutTableV2 } = require('./common/bank-account');
 
 // ---------- Helpers ----------
 /** Safer, lazy require so the module stays optional */
@@ -148,8 +146,10 @@ function createPartyTable({ company, address }) {
 
 /** Signature block */
 function signinTable() {
-  const tableWidth = USABLE_WIDTH;
-  const cols = scaleColumnsTo([3000, 4000], tableWidth);
+  const USABLE_WIDTH_V2 = PAGE.A4_WIDTH - PAGE.MARGIN_V2.LEFT - PAGE.MARGIN_V2.RIGHT;
+
+  const tableWidth = USABLE_WIDTH_V2;
+  const cols = scaleColumnsTo([2500, 4000], tableWidth);
 
   return [
     new Table({
@@ -162,21 +162,63 @@ function signinTable() {
         rowLabelSepValue2('', 'DAI NGHIA INDUSTRIAL MECHANICS CO., LTD', {
           boldValue: true,
           boldKey: true,
-          size: FONT.SIZE_12,
           minRowHeightTwips: 720 * 4,
           alignment: 'center',
         }),
         rowLabelSepValue2('', 'Mr. Le Xuan Nghia', {
           boldValue: true,
           boldKey: true,
-          size: FONT.SIZE_12,
           alignment: 'center',
         }),
         rowLabelSepValue2('', 'General Director', {
           boldValue: true,
           boldKey: true,
-          size: FONT.SIZE_12,
           alignment: 'center',
+        }),
+      ],
+    }),
+  ];
+}
+
+function DateNoTable(no, signedDateInWords) {
+  const USABLE_WIDTH_V2 = PAGE.A4_WIDTH - PAGE.MARGIN_V2.LEFT - PAGE.MARGIN_V2.RIGHT;
+
+  const tableWidth = USABLE_WIDTH_V2;
+  const cols = scaleColumnsTo([4000, 4000], tableWidth);
+
+  return [
+    new Table({
+      ...TABLE_DEFAULTS,
+      // cellMargin: { top: 80, bottom: 80, left: 0, right: 0 },
+      layout: TableLayoutType.FIXED,
+      width: { size: tableWidth, type: WidthType.DXA },
+      columnWidths: cols,
+      rows: [
+        new TableRow({
+          // height: minRowHeightTwips ? { value: minRowHeightTwips, rule: HeightRule.ATLEAST } : undefined,
+          children: [
+            new TableCell({
+              borders: BORDER_NONE,
+              children: [
+                new Paragraph({
+                  alignment: 'left',
+                  children: [
+                    new TextRun({ text: 'No: ', bold: true, size: FONT.SIZE_12 }),
+                    new TextRun({ text: String(no ?? ''), bold: true, size: FONT.SIZE_12 }),
+                  ],
+                }),
+              ],
+            }),
+            new TableCell({
+              borders: BORDER_NONE,
+              children: [
+                new Paragraph({
+                  alignment: 'right',
+                  children: [new TextRun({ text: `Ho Chi Minh, ${signedDateInWords}`, size: FONT.SIZE_12 })],
+                }),
+              ],
+            }),
+          ],
         }),
       ],
     }),
@@ -202,10 +244,8 @@ async function buildDoc(contractBody) {
   // Prefer your util to compute ordinals (e.g., 1->First)
   const nth = toOrdinal?.(payment?.num) ?? String(payment?.num ?? '');
 
-  const doc = createDocument({
+  const doc = createDocumentV2({
     options: {
-      size: FONT.SIZE_12,
-      font: 'Times New Roman',
       numbering: {
         config: [
           // 1. Bulleted list
@@ -231,33 +271,32 @@ async function buildDoc(contractBody) {
       },
     },
     children: [
-      new Paragraph({
-        alignment: AlignmentType.RIGHT,
-        children: [new TextRun({ text: `Ho Chi Minh, ${signedDateInWords}` })],
-      }),
+      new Paragraph({}),
+      ...DateNoTable(no, signedDateInWords),
 
+      new Paragraph({}),
       new Paragraph({
         alignment: AlignmentType.CENTER,
-        children: [new TextRun({ text: 'PAYMENT REQUEST', allCaps: true, bold: true, size: FONT.SIZE_16 })],
+        children: [new TextRun({ text: 'PAYMENT REQUEST', allCaps: true, bold: true, size: 44 })],
       }),
 
-      new Paragraph({
-        alignment: AlignmentType.CENTER,
-        children: [
-          new TextRun({ text: 'No: ', bold: true }),
-          new TextRun({ text: String(no ?? ''), bold: true, color: 'FF0000' }),
-        ],
-      }),
+      // new Paragraph({
+      //   alignment: AlignmentType.CENTER,
+      //   children: [
+      //     new TextRun({ text: 'No: ', bold: true }),
+      //     new TextRun({ text: String(no ?? ''), bold: true, color: 'FF0000' }),
+      //   ],
+      // }),
 
       ...createPartyTable({ company, address }),
 
-      new Paragraph({
-        children: [new TextRun({ text: 'Dear Sir/Madam,' })],
-      }),
+      new Paragraph({}),
 
       new Paragraph({
         children: [
-          new TextRun({ text: 'We sincerely appreciate your trust and cooperation in using our products and services.' }),
+          new TextRun({
+            text: 'Dear Sir/Madam. We sincerely appreciate your trust and cooperation in using our products and services.',
+          }),
         ],
       }),
 
@@ -285,11 +324,14 @@ async function buildDoc(contractBody) {
         ),
       }),
 
+      new Paragraph({}),
+
       new Paragraph({
         children: [new TextRun({ text: 'Please remit payment to the following account:', bold: true, underline: true })],
       }),
 
-      ...bankAccoutTable(bank, 0),
+      ...bankAccoutTableV2(bank, 0),
+      new Paragraph({}),
 
       new Paragraph({
         children: [new TextRun({ text: 'We look forward to receiving your kind cooperation. Yours faithfully' })],
