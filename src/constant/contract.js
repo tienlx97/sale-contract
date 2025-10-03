@@ -1,6 +1,7 @@
 const DEFAULT_CONTRACT_VALUE = {
   dump: {
     contractTitle: 'SALE CONTRACT',
+    underTitle: `(Under {{incotermQuote}})`,
     1: 'This Contract is entered into on {{signDate}} at the office of {{partyBCompany}} between the two parties:',
     2: 'After negotiation, both parties have mutually agreed to sign this contract (“**Contract**”) with the following terms and conditions:',
   },

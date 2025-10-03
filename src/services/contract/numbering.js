@@ -1,6 +1,6 @@
 // numbering.js
 const { AlignmentType, LevelFormat, LevelSuffix } = require('docx');
-const { INDENT, FONT } = require('./docx-config');
+const { INDENT, FONT } = require('../../utils/docx-config');
 
 /**
  * @type {import("docx").INumberingOptions}
@@ -63,6 +63,23 @@ const numberingConfig = {
             run: { bold: true, color: FONT.COLOR_BLACK, size: FONT.SIZE_13 },
             paragraph: {
               indent: { left: INDENT.BULLET_LEFT, hanging: INDENT.BULLET_GAP },
+            },
+          },
+        },
+      ],
+    },
+    {
+      reference: 'line-numbering',
+      levels: [
+        {
+          level: 0,
+          format: LevelFormat.BULLET,
+          text: '-',
+          suffix: LevelSuffix.SPACE,
+          alignment: AlignmentType.LEFT,
+          style: {
+            paragraph: {
+              indent: { left: 0, hanging: 0 },
             },
           },
         },

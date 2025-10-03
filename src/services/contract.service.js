@@ -286,10 +286,11 @@ const buildDoc = async (contractBody) => {
 
   let transportationLocation;
 
+  const incotermQuote = `Under Incoterms® ${commercial.incoterm.year} - ${commercial.incoterm.rule} - ${commercial.incoterm.location}`;
+
   switch (commercial.incoterm.rule) {
     case 'DDP':
       transportationLocation = 'site';
-
       break;
     case 'EXW':
     case 'CIF':
@@ -336,7 +337,36 @@ const buildDoc = async (contractBody) => {
           }),
         ],
       }),
+      // new Paragraph({
+      //   alignment: AlignmentType.CENTER,
+      //   children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.dump.underTitle, { incotermQuote }),
+      // }),
       ...projectDetailTable(info),
+
+      // new Paragraph({
+      //   children: [new TextRun({ text: 'This Contract is made in accordance with:' })],
+      // }),
+      // new Paragraph({
+      //   numbering: { reference: 'line-numbering', level: 0 },
+      //   children: [
+      //     new TextRun({
+      //       text: `Incoterms® ${commercial.incoterm.year} published by the International Chamber of Commerce (ICC);`,
+      //     }),
+      //   ],
+      // }),
+      // new Paragraph({
+      //   numbering: { reference: 'line-numbering', level: 0 },
+      //   children: [
+      //     new TextRun({
+      //       text: 'The laws and regulations of the Socialist Republic of Viet Nam (for the Seller) and relevant international trade practices;',
+      //     }),
+      //   ],
+      // }),
+      // new Paragraph({
+      //   numbering: { reference: 'line-numbering', level: 0 },
+      //   children: [new TextRun({ text: 'The mutual agreement between the Supplier and the Buyer.' })],
+      // }),
+
       new Paragraph({
         children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.dump[1], {
           signDate: signedDateInWords.t2,
@@ -479,10 +509,11 @@ const buildDoc = async (contractBody) => {
           }),
         ],
       }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: hbsMdToRuns(commercial.pod),
-      }),
+      commercial.incoterm.rule !== 'FOB' &&
+        new Paragraph({
+          indent: { left: INDENT.L1_LEFT },
+          children: hbsMdToRuns(commercial.pod),
+        }),
       //
       new Paragraph({
         numbering: { reference: 'article-numbering', level: 1 },

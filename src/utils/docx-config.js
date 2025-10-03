@@ -51,6 +51,7 @@ const INDENT = {
 
   VAL: {
     0.5: 0.5 * DXA.INCH,
+    0.25: 0.25 * DXA.INCH,
   },
 };
 
