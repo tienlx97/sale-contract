@@ -273,6 +273,156 @@ function createPaymentArticle({ appendPayments, commercial, payments }, { format
   ];
 }
 
+const renderPol = (commercial) => {
+  return commercial.incoterm.rule !== 'EXW'
+    ? [
+        new Paragraph({
+          numbering: { reference: 'article-numbering', level: 1 },
+          children: [
+            new TextRun({
+              text: 'Port of loading',
+              bold: true,
+            }),
+          ],
+        }),
+        new Paragraph({
+          indent: { left: INDENT.L1_LEFT },
+          children: hbsMdToRuns(commercial.pol),
+        }),
+      ]
+    : [];
+};
+
+const renderPod = (commercial) => {
+  return commercial.incoterm.rule !== 'FOB' && commercial.incoterm.rule !== 'EXW'
+    ? [
+        new Paragraph({
+          numbering: { reference: 'article-numbering', level: 1 },
+          children: [
+            new TextRun({
+              text: 'Port of destination',
+              bold: true,
+            }),
+          ],
+        }),
+        new Paragraph({
+          indent: { left: INDENT.L1_LEFT },
+          children: hbsMdToRuns(commercial.pod),
+        }),
+      ]
+    : [];
+};
+
+const renderShipment = (commercial) => {
+  return [
+    new Paragraph({
+      numbering: { reference: 'article-numbering', level: 1 },
+      children: [
+        new TextRun({
+          text: 'Shipment terms',
+          bold: true,
+        }),
+      ],
+    }),
+    new Paragraph({
+      indent: { left: INDENT.L1_LEFT },
+      children: hbsMdToRuns(commercial.shipmentTerms),
+    }),
+  ];
+};
+
+const renderPartialShipmentsTransshipment = () => {
+  return [
+    new Paragraph({
+      numbering: { reference: 'article-numbering', level: 1 },
+      children: [
+        new TextRun({
+          text: 'Partial Shipments and Transshipment',
+          bold: true,
+        }),
+      ],
+    }),
+    new Paragraph({
+      indent: { left: INDENT.L1_LEFT },
+      children: [
+        new TextRun({
+          text: 'Partial shipments: Allowed',
+        }),
+      ],
+    }),
+    new Paragraph({
+      indent: { left: INDENT.L1_LEFT },
+      children: [
+        new TextRun({
+          text: 'Transshipment: Allowed',
+        }),
+      ],
+    }),
+  ];
+};
+
+const renderNotifyParty = (commercial) => {
+  return [
+    new Paragraph({
+      numbering: { reference: 'article-numbering', level: 1 },
+      children: [
+        new TextRun({
+          text: 'Notify Party',
+          bold: true,
+        }),
+      ],
+    }),
+    new Paragraph({
+      indent: { left: INDENT.L1_LEFT },
+      children: hbsMdToRuns(commercial.notifyParty.company),
+    }),
+    new Paragraph({
+      indent: { left: INDENT.L1_LEFT },
+      children: hbsMdToRuns(commercial.notifyParty.address),
+    }),
+  ];
+};
+
+const renderConsignee = (commercial) => {
+  return [
+    new Paragraph({
+      numbering: { reference: 'article-numbering', level: 1 },
+      children: [
+        new TextRun({
+          text: 'Consignee',
+          bold: true,
+        }),
+      ],
+    }),
+    new Paragraph({
+      indent: { left: INDENT.L1_LEFT },
+      children: hbsMdToRuns(commercial.consignee.company),
+    }),
+    new Paragraph({
+      indent: { left: INDENT.L1_LEFT },
+      children: hbsMdToRuns(commercial.consignee.address),
+    }),
+  ];
+};
+
+const renderPacking = () => {
+  return [
+    new Paragraph({
+      numbering: { reference: 'article-numbering', level: 1 },
+      children: [
+        new TextRun({
+          text: 'Packing',
+          bold: true,
+        }),
+      ],
+    }),
+    new Paragraph({
+      indent: { left: INDENT.L1_LEFT },
+      children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.packing),
+    }),
+  ];
+};
+
 /**
  * Create a contract
  * @param {Object} contractBody
@@ -314,7 +464,7 @@ const buildDoc = async (contractBody) => {
 
   const quotationDateInWords = {
     t1: formatDayMonthYear(quotationDate),
-    t2: isoToDDMMYYYY(signDate),
+    t2: isoToDDMMYYYY(quotationDate),
   };
 
   const doc = createDocument({
@@ -437,123 +587,14 @@ const buildDoc = async (contractBody) => {
 
       ...requireDocumentTable(commercial.documents),
 
-      new Paragraph({
-        numbering: { reference: 'article-numbering', level: 1 },
-        children: [
-          new TextRun({
-            text: 'Packing',
-            bold: true,
-          }),
-        ],
-      }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: hbsMdToRuns(DEFAULT_CONTRACT_VALUE.packing),
-      }),
-      new Paragraph({
-        numbering: { reference: 'article-numbering', level: 1 },
-        children: [
-          new TextRun({
-            text: 'Consignee',
-            bold: true,
-          }),
-        ],
-      }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: hbsMdToRuns(commercial.consignee.company),
-      }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: hbsMdToRuns(commercial.consignee.address),
-      }),
-      // //
-      new Paragraph({
-        numbering: { reference: 'article-numbering', level: 1 },
-        children: [
-          new TextRun({
-            text: 'Notify Party',
-            bold: true,
-          }),
-        ],
-      }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: hbsMdToRuns(commercial.notifyParty.company),
-      }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: hbsMdToRuns(commercial.notifyParty.address),
-      }),
-      // //
-      new Paragraph({
-        numbering: { reference: 'article-numbering', level: 1 },
-        children: [
-          new TextRun({
-            text: 'Port of shipment',
-            bold: true,
-          }),
-        ],
-      }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: hbsMdToRuns(commercial.pol),
-      }),
-      // //
-      new Paragraph({
-        numbering: { reference: 'article-numbering', level: 1 },
-        children: [
-          new TextRun({
-            text: 'Port of destination',
-            bold: true,
-          }),
-        ],
-      }),
-      commercial.incoterm.rule !== 'FOB' &&
-        new Paragraph({
-          indent: { left: INDENT.L1_LEFT },
-          children: hbsMdToRuns(commercial.pod),
-        }),
-      //
-      new Paragraph({
-        numbering: { reference: 'article-numbering', level: 1 },
-        children: [
-          new TextRun({
-            text: 'Shipment terms',
-            bold: true,
-          }),
-        ],
-      }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: hbsMdToRuns(commercial.shipmentTerms),
-      }),
-      // //
-      new Paragraph({
-        numbering: { reference: 'article-numbering', level: 1 },
-        children: [
-          new TextRun({
-            text: 'Partial Shipments and Transshipment',
-            bold: true,
-          }),
-        ],
-      }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: [
-          new TextRun({
-            text: 'Partial shipments: Allowed',
-          }),
-        ],
-      }),
-      new Paragraph({
-        indent: { left: INDENT.L1_LEFT },
-        children: [
-          new TextRun({
-            text: 'Transshipment: Allowed',
-          }),
-        ],
-      }),
+      ...renderPacking(),
+
+      ...renderConsignee(commercial),
+      ...renderNotifyParty(commercial),
+      ...renderPol(commercial),
+      ...renderPod(commercial),
+      ...renderShipment(commercial),
+      ...renderPartialShipmentsTransshipment(),
 
       ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleauthorityAndResponsibilitiesOfPartyA),
       ...renderArticle(DEFAULT_CONTRACT_VALUE.article.articleauthorityAndResponsibilitiesOfPartyB),
