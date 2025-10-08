@@ -248,7 +248,7 @@ const DEFAULT_CONTRACT_VALUE = {
           items: {
             intent: 1,
             val: [
-              '- Pay a penalty equivalent to five percent (5%) of the total outstanding Contract value; and',
+              '- Pay a penalty equivalent to fifteen percent (15%) of the total outstanding Contract value; and',
               '- Indemnify Party B for any and all damages incurred as a result of such breach.',
             ],
           },
@@ -338,7 +338,7 @@ const DEFAULT_CONTRACT_VALUE = {
       DDP: 'The Contract Value is a lump sum, covering all costs related to **fabrication, packing, inland transportation, export customs clearance, ocean freight, marine insurance, import customs clearance, import duties, taxes, delivery to the agreed place of destination, and warranty** . Party B shall be responsible for all such costs until delivery to the agreed place of destination. The Contract Value shall not be subject to remeasurement of quantities.',
       EXW: 'The Contract Value is a lump sum, covering all costs related to **fabrication, packing, and warranty** . All other costs, including **inland transportation, export customs clearance, freight, insurance, import duties, and any taxes or charges at the country of destination** , shall be borne solely by Party A. The Contract Value shall not be subject to remeasurement of quantities.',
       CIF: 'The Contract Value is a lump sum, covering all costs related to **fabrication, packing, inland transportation to the port of loading, export customs clearance, ocean freight, marine insurance, and warranty** . Import duties, taxes, and all charges at the country of destination shall be borne solely by Party A. The Contract Value shall not be subject to remeasurement of quantities.',
-      FOB: 'The Contract Value is a lump sum, covering all costs related to **fabrication, packing, inland transportation to the port of loading, export customs clearance, loading onto the vessel, and warranty**. All costs beyond loading on board the vessel, including **ocean freight, marine insurance, import duties, and taxes at the country of destination **, shall be borne solely by Party A (the Buyer). The Contract Price shall not be subject to remeasurement of quantities.',
+      FOB: 'The Contract Value is a lump sum, covering all costs related to **fabrication, packing, inland transportation to the port of loading, export customs clearance, loading onto the vessel, and warranty**. All costs beyond loading on board the vessel, including **ocean freight, marine insurance, import duties, and taxes at the country of destination**, shall be borne solely by Party A (the Buyer). The Contract Price shall not be subject to remeasurement of quantities.',
     },
 
     contractValueText:
